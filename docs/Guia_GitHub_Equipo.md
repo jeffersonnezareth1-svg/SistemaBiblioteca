@@ -2,7 +2,7 @@
 
 Repositorio: https://github.com/jeffersonnezareth1-svg/SistemaBiblioteca
 
-## 1. JEFF: invitar a los compañeros
+## 1. Dueño del repositorio: invitar a los compañeros
 
 1. Abre el repositorio en GitHub y entra a **Settings** (pestaña de arriba).
 2. Menú izquierdo: **Collaborators** (puede pedirte tu contraseña).
@@ -54,7 +54,7 @@ git push -u origin pruebas-autor
 
 1. En GitHub aparecerá el botón **Compare & pull request**. Clic ahí.
 2. Escribir qué se hizo y clic en **Create pull request**.
-3. JEFF lo revisa y da clic en **Merge pull request**.
+3. El dueño del repositorio lo revisa y da clic en **Merge pull request**.
 
 ## 6. Traer los cambios de los demás
 
