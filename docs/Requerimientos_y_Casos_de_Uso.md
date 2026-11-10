@@ -63,21 +63,19 @@ un `util.Respuesta` (éxito o error y el campo con error).
 
 ### 2.4 Formato de los requerimientos funcionales (Grupal)
 
-Cada requerimiento funcional se escribe para que sea **verificable**: dice qué recibe el sistema, qué hace, qué
-devuelve y cómo se comprueba que se cumple. Así cada caso de prueba puede citar el RF y comparar el resultado obtenido
-con el resultado esperado.
+Todos los requerimientos funcionales se escriben con el **formato de requerimientos funcionales** de la asignatura
+(una ficha por requerimiento), para que cada caso de prueba pueda citar el RF y comparar el resultado obtenido con el
+esperado.
 
-| Atributo | Significado |
-|----------|-------------|
-| **ID** | Identificador único `RF-<módulo>-<número>` (GEN, LOG, MEN, LIB, AUT, LEC, PRE, DEV). |
-| **Nombre** | Qué hace el sistema, en pocas palabras. |
-| **Descripción** | "El sistema debe…", una sola capacidad por requerimiento. |
-| **Entradas** | Datos que ingresa el usuario o que vienen de la base de datos. |
-| **Proceso** | Reglas y validaciones que aplica el sistema. |
-| **Salidas** | Resultado visible: mensaje, cambio en la tabla, cambio en la base. |
+| Campo de la ficha | Qué contiene |
+|-------------------|--------------|
+| **Número** | Identificador único `RF-<módulo>-<número>` (GEN, LOG, MEN, LIB, AUT, LEC, PRE, DEV). |
+| **Título** | Qué hace el sistema, en pocas palabras. |
+| **Texto (DEFINICIÓN)** | "El sistema permitirá / validará…", una sola capacidad por requerimiento. |
+| **Tipo** | Funcional. |
+| **Detalles de requisitos y restricciones (ESPECIFICACIÓN)** | Entradas, proceso, salidas, reglas de cada campo, mensajes que muestra el sistema, criterio de aceptación y clase/método del código donde se cumple. |
+| **Fecha de revisión y versión, AUTOR** | Fecha, versión del documento e integrante responsable del módulo. |
 | **Prioridad** | **Alta** (sin esto el sistema no sirve), **Media** (necesario pero hay alternativa), **Baja** (comodidad). |
-| **Criterio de aceptación** | Condición observable que debe cumplirse para dar el RF por verificado. |
-| **Implementado en** | Clase y método del código donde se cumple (sirve para el análisis estático y JUnit). |
 
 Reglas comunes a todos los módulos (aplican a cada RF de registro y modificación):
 
@@ -104,74 +102,250 @@ Reglas comunes a todos los módulos (aplican a cada RF de registro y modificaci�
 | RF-MEN-01 | Acceder a los módulos desde el menú | Alta |
 | RF-MEN-02 | Cerrar sesión y salir | Media |
 
-| **RF-GEN-01** | **Conectar con la base de datos** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El sistema debe abrir la conexión con la base MySQL `bd_biblioteca` cada vez que necesita leer o guardar datos. |
-| Entradas | URL, usuario y contraseña definidos en `util.Conexion`. |
-| Proceso | Carga el driver JDBC y abre la conexión. |
-| Salidas | Conexión abierta, o mensaje de error si el servidor no responde o las credenciales son erróneas. |
-| Criterio de aceptación | Con MySQL detenido, al iniciar sesión aparece "No se pudo conectar con la base de datos: …" y la aplicación no se cae. |
-| Implementado en | `util.Conexion.getConexion` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-GEN-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Conectar con la base de datos                                          |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema debe abrir la conexión con la base MySQL `bd_biblioteca`    |
+|                          | cada vez que necesita leer o guardar datos.                            |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Entradas: URL, usuario y contraseña definidos en `util.Conexion`.    |
+| restricciones:           |                                                                        |
+|                          | - Proceso: Carga el driver JDBC y abre la conexión.                    |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - Salidas: Conexión abierta, o mensaje de error si el servidor no      |
+|                          |   responde o las credenciales son erróneas.                            |
+|                          |                                                                        |
+|                          | Criterio de aceptación: Con MySQL detenido, al iniciar sesión aparece  |
+|                          | "No se pudo conectar con la base de datos: …" y la aplicación no se    |
+|                          | cae.                                                                   |
+|                          |                                                                        |
+|                          | Implementado en: `util.Conexion.getConexion`                           |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LOG-01** | **Iniciar sesión** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El sistema debe permitir el ingreso solo a usuarios registrados y activos. |
-| Entradas | Usuario, contraseña. |
-| Proceso | Valida los campos (RF-LOG-02, RF-LOG-03), cifra la contraseña con SHA-256 y busca el par usuario/hash en la tabla `usuario`. |
-| Salidas | "Bienvenido, \<nombres\>", se guarda la sesión y se abre el menú principal. |
-| Criterio de aceptación | `admin` / `Admin123` y `bibliotecario` / `Biblio123` abren el menú principal. |
-| Implementado en | `LoginController.iniciarSesion`, `UsuarioDAO.autenticar`, `util.Sesion` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LOG-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Iniciar sesión                                                         |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema debe permitir el ingreso solo a usuarios registrados y      |
+|                          | activos.                                                               |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Entradas: Usuario, contraseña.                                       |
+| restricciones:           |                                                                        |
+|                          | - Proceso: Valida los campos (RF-LOG-02, RF-LOG-03), cifra la          |
+| ESPECIFICACIÓN           |   contraseña con SHA-256 y busca el par usuario/hash en la tabla       |
+|                          |   `usuario`.                                                           |
+|                          |                                                                        |
+|                          | - Salidas: "Bienvenido, \<nombres\>", se guarda la sesión y se abre el |
+|                          |   menú principal.                                                      |
+|                          |                                                                        |
+|                          | Criterio de aceptación: `admin` / `Admin123` y `bibliotecario` /       |
+|                          | `Biblio123` abren el menú principal.                                   |
+|                          |                                                                        |
+|                          | Implementado en: `LoginController.iniciarSesion`,                      |
+|                          | `UsuarioDAO.autenticar`, `util.Sesion`                                 |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LOG-02** | **Validar el nombre de usuario** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El usuario debe ser obligatorio, sin espacios internos y de máximo 30 caracteres. |
-| Criterio de aceptación | vacío → "El usuario es obligatorio"; `ad min` → "El usuario no debe contener espacios"; 31 caracteres → "El usuario no puede superar 30 caracteres". |
-| Implementado en | `LoginController.validarUsuario` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LOG-02**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar el nombre de usuario                                           |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El usuario debe ser obligatorio, sin espacios internos y de máximo 30  |
+|                          | caracteres.                                                            |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Criterio de aceptación: Vacío → "El usuario es obligatorio"; `ad min`  |
+| restricciones:           | → "El usuario no debe contener espacios"; 31 caracteres → "El usuario  |
+|                          | no puede superar 30 caracteres".                                       |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | Implementado en: `LoginController.validarUsuario`                      |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LOG-03** | **Validar la contraseña** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | La contraseña debe ser obligatoria y tener al menos 6 caracteres. |
-| Criterio de aceptación | vacía → "La contraseña es obligatoria"; `12345` → "La contraseña debe tener al menos 6 caracteres". |
-| Implementado en | `LoginController.validarContrasena` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LOG-03**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar la contraseña                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | La contraseña debe ser obligatoria y tener al menos 6 caracteres.      |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Criterio de aceptación: Vacía → "La contraseña es obligatoria";        |
+| restricciones:           | `12345` → "La contraseña debe tener al menos 6 caracteres".            |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `LoginController.validarContrasena`                   |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LOG-04** | **Rechazar credenciales incorrectas** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | Si el usuario no existe o la contraseña no coincide, el sistema debe negar el ingreso sin indicar cuál de los dos falló. |
-| Criterio de aceptación | `admin` / `Admin999` → "Usuario o contraseña incorrectos" y el foco va a la contraseña. |
-| Implementado en | `LoginController.iniciarSesion` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LOG-04**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Rechazar credenciales incorrectas                                      |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | Si el usuario no existe o la contraseña no coincide, el sistema debe   |
+|                          | negar el ingreso sin indicar cuál de los dos falló.                    |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Criterio de aceptación: `admin` / `Admin999` → "Usuario o contraseña   |
+| restricciones:           | incorrectos" y el foco va a la contraseña.                             |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `LoginController.iniciarSesion`                       |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LOG-05** | **Rechazar usuarios inactivos** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | Un usuario con estado inactivo no debe poder ingresar aunque su contraseña sea correcta. |
-| Criterio de aceptación | `invitado` / `Invitado123` → "El usuario está inactivo. Contacte al administrador". |
-| Implementado en | `LoginController.iniciarSesion` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LOG-05**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Rechazar usuarios inactivos                                            |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | Un usuario con estado inactivo no debe poder ingresar aunque su        |
+|                          | contraseña sea correcta.                                               |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Criterio de aceptación: `invitado` / `Invitado123` → "El usuario está  |
+| restricciones:           | inactivo. Contacte al administrador".                                  |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `LoginController.iniciarSesion`                       |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LOG-06** | **Bloquear tras 3 intentos fallidos** |
-|---|---|
-| Prioridad | Media |
-| Descripción | Después de 3 intentos de ingreso fallidos el sistema debe avisar y cerrarse. |
-| Criterio de aceptación | Al tercer error aparece "Superó el número máximo de intentos. El sistema se cerrará." y la aplicación termina. |
-| Implementado en | `LoginFrame.MAX_INTENTOS`, `LoginFrame` (contador `intentosFallidos`) |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LOG-06**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Bloquear tras 3 intentos fallidos                                      |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | Después de 3 intentos de ingreso fallidos el sistema debe avisar y     |
+|                          | cerrarse.                                                              |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Criterio de aceptación: Al tercer error aparece "Superó el número      |
+| restricciones:           | máximo de intentos. El sistema se cerrará." y la aplicación termina.   |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `LoginFrame.MAX_INTENTOS`, `LoginFrame` (contador     |
+|                          | `intentosFallidos`)                                                    |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-MEN-01** | **Acceder a los módulos desde el menú** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El menú principal debe mostrar los módulos Libros, Autores, Lectores, Préstamos y Devoluciones, tanto en la barra de menú como en botones laterales. |
-| Criterio de aceptación | Cada opción abre el panel de su módulo con la tabla cargada. |
-| Implementado en | `MenuPrincipalFrame` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-MEN-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Acceder a los módulos desde el menú                                    |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El menú principal debe mostrar los módulos Libros, Autores, Lectores,  |
+|                          | Préstamos y Devoluciones, tanto en la barra de menú como en botones    |
+| DEFINICIÓN               | laterales.                                                             |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Criterio de aceptación: Cada opción abre el panel de su módulo con la  |
+| restricciones:           | tabla cargada.                                                         |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `MenuPrincipalFrame`                                  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-MEN-02** | **Cerrar sesión y salir** |
-|---|---|
-| Prioridad | Media |
-| Descripción | El usuario debe poder cerrar sesión (volver al login) o salir de la aplicación (Ctrl+Q), en ambos casos con confirmación. |
-| Criterio de aceptación | Al responder "Sí" se vuelve al login o se cierra la aplicación; al responder "No" se queda en el menú. |
-| Implementado en | `MenuPrincipalFrame`, `LoginController.cerrarSesion` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-MEN-02**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Cerrar sesión y salir                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El usuario debe poder cerrar sesión (volver al login) o salir de la    |
+|                          | aplicación (Ctrl+Q), en ambos casos con confirmación.                  |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Criterio de aceptación: Al responder "Sí" se vuelve al login o se      |
+| restricciones:           | cierra la aplicación; al responder "No" se queda en el menú.           |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `MenuPrincipalFrame`, `LoginController.cerrarSesion`  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | Grupo                                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
 
 #### Casos de uso
 
@@ -261,179 +435,530 @@ eliminar), casos de uso y las capturas de sus pantallas.
 
 ##### Especificación de operaciones
 
-| **RF-LIB-01** | **Registrar libro** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El sistema debe permitir registrar un libro nuevo. |
-| Entradas | ISBN, título, editorial, año de publicación, género, número de páginas, stock (todos como texto del formulario). |
-| Proceso | 1) Valida los campos en orden: ISBN → título → editorial → año → género → páginas → stock (RF-LIB-06 a RF-LIB-13). 2) Verifica que el ISBN no exista (RF-LIB-07). 3) Inserta el registro en la tabla `libro`. |
-| Salidas | "Libro registrado correctamente"; el formulario se cierra y la tabla se actualiza. |
-| Criterio de aceptación | Con `9789942000001`, "La vorágine", "Editorial Planeta", `1924`, Novela, `320`, `3` el libro aparece en la tabla con esos datos. |
-| Implementado en | `LibroController.registrarLibro`, `validarCampos`, `LibroDAO.insertar` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Registrar libro                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema debe permitir registrar un libro nuevo.                     |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Entradas: ISBN, título, editorial, año de publicación, género,       |
+| restricciones:           |   número de páginas, stock (todos como texto del formulario).          |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | - Proceso: 1) Valida los campos en orden: ISBN → título → editorial →  |
+|                          |   año → género → páginas → stock (RF-LIB-06 a RF-LIB-13). 2) Verifica  |
+|                          |   que el ISBN no exista (RF-LIB-07). 3) Inserta el registro en la      |
+|                          |   tabla `libro`.                                                       |
+|                          |                                                                        |
+|                          | - Salidas: "Libro registrado correctamente"; el formulario se cierra y |
+|                          |   la tabla se actualiza.                                               |
+|                          |                                                                        |
+|                          | Criterio de aceptación: Con `9789942000001`, "La vorágine", "Editorial |
+|                          | Planeta", `1924`, Novela, `320`, `3` el libro aparece en la tabla con  |
+|                          | esos datos.                                                            |
+|                          |                                                                        |
+|                          | Implementado en: `LibroController.registrarLibro`, `validarCampos`,    |
+|                          | `LibroDAO.insertar`                                                    |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-02** | **Listar libros** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El sistema debe mostrar todos los libros registrados al abrir el módulo y al pulsar "Mostrar todos". |
-| Salidas | Tabla con id, ISBN, título, editorial, año, género, páginas y stock. |
-| Criterio de aceptación | Con el script de datos de prueba recién ejecutado se muestran los 15 libros. |
-| Implementado en | `LibroController.listarLibros`, `LibroDAO.listar` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-02**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Listar libros                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema debe mostrar todos los libros registrados al abrir el       |
+|                          | módulo y al pulsar "Mostrar todos".                                    |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Salidas: Tabla con id, ISBN, título, editorial, año, género, páginas |
+| restricciones:           |   y stock.                                                             |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Criterio de aceptación: Con el script de datos de prueba recién        |
+|                          | ejecutado se muestran los 15 libros.                                   |
+|                          |                                                                        |
+|                          | Implementado en: `LibroController.listarLibros`, `LibroDAO.listar`     |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-03** | **Buscar libros** |
-|---|---|
-| Prioridad | Media |
-| Descripción | El sistema debe filtrar los libros cuyo ISBN, título, editorial o género contengan el texto escrito (coincidencia parcial). |
-| Entradas | Texto de búsqueda. |
-| Proceso | Si el texto está vacío lista todos (RF-LIB-02); si no, consulta con `LIKE %texto%`. |
-| Salidas | Tabla con las coincidencias; vacía si no hay ninguna. |
-| Criterio de aceptación | Buscar "Novela" muestra solo libros de ese género; buscar "zzz" deja la tabla vacía; texto vacío muestra los 15. |
-| Implementado en | `LibroController.buscarLibros`, `LibroDAO.buscar` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-03**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Buscar libros                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema debe filtrar los libros cuyo ISBN, título, editorial o      |
+|                          | género contengan el texto escrito (coincidencia parcial).              |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Entradas: Texto de búsqueda.                                         |
+| restricciones:           |                                                                        |
+|                          | - Proceso: Si el texto está vacío lista todos (RF-LIB-02); si no,      |
+| ESPECIFICACIÓN           |   consulta con `LIKE %texto%`.                                         |
+|                          |                                                                        |
+|                          | - Salidas: Tabla con las coincidencias; vacía si no hay ninguna.       |
+|                          |                                                                        |
+|                          | Criterio de aceptación: Buscar "Novela" muestra solo libros de ese     |
+|                          | género; buscar "zzz" deja la tabla vacía; texto vacío muestra los 15.  |
+|                          |                                                                        |
+|                          | Implementado en: `LibroController.buscarLibros`, `LibroDAO.buscar`     |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-04** | **Modificar libro** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El sistema debe permitir cambiar los datos de un libro seleccionado (botón Editar o doble clic). |
-| Entradas | Id del libro seleccionado y los mismos campos de RF-LIB-01. |
-| Proceso | 1) Verifica que haya un libro seleccionado (RF-LIB-15). 2) Valida los campos igual que al registrar. 3) Verifica que el ISBN no pertenezca a **otro** libro. 4) Actualiza el registro. |
-| Salidas | "Libro actualizado correctamente"; la tabla muestra los nuevos datos. |
-| Criterio de aceptación | Cambiar solo el stock de un libro conserva su ISBN y no da error de ISBN repetido. |
-| Implementado en | `LibroController.actualizarLibro`, `LibroDAO.actualizar` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-04**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Modificar libro                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema debe permitir cambiar los datos de un libro seleccionado    |
+|                          | (botón Editar o doble clic).                                           |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Entradas: Id del libro seleccionado y los mismos campos de           |
+| restricciones:           |   RF-LIB-01.                                                           |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | - Proceso: 1) Verifica que haya un libro seleccionado (RF-LIB-15). 2)  |
+|                          |   Valida los campos igual que al registrar. 3) Verifica que el ISBN no |
+|                          |   pertenezca a **otro** libro. 4) Actualiza el registro.               |
+|                          |                                                                        |
+|                          | - Salidas: "Libro actualizado correctamente"; la tabla muestra los     |
+|                          |   nuevos datos.                                                        |
+|                          |                                                                        |
+|                          | Criterio de aceptación: Cambiar solo el stock de un libro conserva su  |
+|                          | ISBN y no da error de ISBN repetido.                                   |
+|                          |                                                                        |
+|                          | Implementado en: `LibroController.actualizarLibro`,                    |
+|                          | `LibroDAO.actualizar`                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-05** | **Eliminar libro** |
-|---|---|
-| Prioridad | Alta |
-| Descripción | El sistema debe permitir eliminar un libro seleccionado después de pedir confirmación. |
-| Proceso | 1) Verifica selección y existencia (RF-LIB-15). 2) Verifica que no tenga préstamos (RF-LIB-14). 3) Borra el registro. |
-| Salidas | "Libro eliminado correctamente"; el libro desaparece de la tabla. Si el usuario responde "No" en la confirmación, no pasa nada. |
-| Criterio de aceptación | El libro id 9 (sin préstamos) se elimina. |
-| Implementado en | `LibroController.eliminarLibro`, `LibroDAO.eliminar` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-05**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Eliminar libro                                                         |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema debe permitir eliminar un libro seleccionado después de     |
+|                          | pedir confirmación.                                                    |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Proceso: 1) Verifica selección y existencia (RF-LIB-15). 2) Verifica |
+| restricciones:           |   que no tenga préstamos (RF-LIB-14). 3) Borra el registro.            |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | - Salidas: "Libro eliminado correctamente"; el libro desaparece de la  |
+|                          |   tabla. Si el usuario responde "No" en la confirmación, no pasa nada. |
+|                          |                                                                        |
+|                          | Criterio de aceptación: El libro id 9 (sin préstamos) se elimina.      |
+|                          |                                                                        |
+|                          | Implementado en: `LibroController.eliminarLibro`, `LibroDAO.eliminar`  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
 ##### Especificación de validaciones y reglas
 
-En cada validación, la columna **Mensaje** es el resultado esperado exacto para las pruebas.
+En cada ficha, los mensajes entre comillas son el resultado esperado exacto para las pruebas.
 
-| **RF-LIB-06** | **Validar ISBN** |
-|---|---|
-| Prioridad | Alta |
-| Regla | obligatorio; solo dígitos (sin guiones ni espacios); exactamente 10 o 13 dígitos. |
-| Implementado en | `LibroController.validarIsbn` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-06**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar ISBN                                                           |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará que el ISBN ingresado sea obligatorio, numérico y  |
+|                          | de 10 o 13 dígitos antes de registrar o modificar un libro.            |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatorio; solo dígitos (sin guiones ni espacios);          |
+| restricciones:           |   exactamente 10 o 13 dígitos.                                         |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Condiciones y mensaje que muestra el sistema:                          |
+|                          |                                                                        |
+|                          | - Vacío o solo espacios (ej. `""`, `"   "`): El ISBN es obligatorio    |
+|                          |                                                                        |
+|                          | - Contiene letras, guiones o espacios internos (ej. `978-9942`,        |
+|                          |   `12345abcde`): El ISBN solo debe contener números (sin guiones ni    |
+|                          |   espacios)                                                            |
+|                          |                                                                        |
+|                          | - Longitud distinta de 10 y 13 (ej. `123456789` (9), `12345678901`     |
+|                          |   (11)): El ISBN debe tener 10 o 13 dígitos                            |
+|                          |                                                                        |
+|                          | - Válido (ej. `1234567890`, `9789942000001`): se acepta                |
+|                          |                                                                        |
+|                          | Implementado en: `LibroController.validarIsbn`                         |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| Condición | Ejemplo | Mensaje |
-|-----------|---------|---------|
-| Vacío o solo espacios | `""`, `"   "` | El ISBN es obligatorio |
-| Contiene letras, guiones o espacios internos | `978-9942`, `12345abcde` | El ISBN solo debe contener números (sin guiones ni espacios) |
-| Longitud distinta de 10 y 13 | `123456789` (9), `12345678901` (11) | El ISBN debe tener 10 o 13 dígitos |
-| Válido | `1234567890`, `9789942000001` | (sin error) |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-07**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Controlar ISBN único                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema no permitirá registrar ni modificar un libro con un ISBN    |
+|                          | que ya pertenezca a otro libro.                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: No puede haber dos libros con el mismo ISBN. Al modificar se  |
+| restricciones:           |   excluye el propio libro.                                             |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | - Mensaje: Al registrar "Ya existe un libro registrado con ese ISBN";  |
+|                          |   al modificar "Ya existe otro libro registrado con ese ISBN".         |
+|                          |                                                                        |
+|                          | Implementado en: `LibroDAO.existeIsbn`                                 |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-07** | **Controlar ISBN único** |
-|---|---|
-| Prioridad | Alta |
-| Regla | no puede haber dos libros con el mismo ISBN. Al modificar se excluye el propio libro. |
-| Mensaje | al registrar "Ya existe un libro registrado con ese ISBN"; al modificar "Ya existe otro libro registrado con ese ISBN". |
-| Implementado en | `LibroDAO.existeIsbn` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-08**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar título                                                         |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará que el título del libro sea obligatorio y tenga    |
+|                          | entre 2 y 150 caracteres.                                              |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Condiciones y mensaje que muestra el sistema:                          |
+| restricciones:           |                                                                        |
+|                          | - Vacío: "El título es obligatorio"                                    |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - Menos de 2 caracteres: "El título debe tener al menos 2 caracteres"  |
+|                          |                                                                        |
+|                          | - Más de 150 caracteres: "El título no puede superar 150 caracteres"   |
+|                          |                                                                        |
+|                          | Valores límite: 1 ✗, 2 ✓, 150 ✓, 151 ✗.                                |
+|                          |                                                                        |
+|                          | Implementado en: `validarTitulo`                                       |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-08** | **Validar título** |
-|---|---|
-| Prioridad | Alta |
-| Implementado en | `validarTitulo` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-09**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar editorial                                                      |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará que la editorial sea obligatoria, tenga entre 2 y  |
+|                          | 100 caracteres y solo contenga caracteres permitidos.                  |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Condiciones y mensaje que muestra el sistema:                          |
+| restricciones:           |                                                                        |
+|                          | - Vacía: "La editorial es obligatoria"                                 |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - Caracteres distintos de letras, números, espacios y `. , & ' -`: "La |
+|                          |   editorial contiene caracteres no permitidos"                         |
+|                          |                                                                        |
+|                          | - Menos de 2 o más de 100 caracteres: "La editorial debe tener entre 2 |
+|                          |   y 100 caracteres"                                                    |
+|                          |                                                                        |
+|                          | Valores límite: 1 ✗, 2 ✓, 100 ✓, 101 ✗. Ejemplo inválido:              |
+|                          | `Editorial#1`.                                                         |
+|                          |                                                                        |
+|                          | Implementado en: `validarEditorial`                                    |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| Condición | Mensaje |
-|-----------|---------|
-| Vacío | El título es obligatorio |
-| Menos de 2 caracteres | El título debe tener al menos 2 caracteres |
-| Más de 150 caracteres | El título no puede superar 150 caracteres |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-10**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar año de publicación                                             |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará que el año de publicación sea obligatorio,         |
+|                          | numérico y esté entre 1450 y el año actual.                            |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Condiciones y mensaje que muestra el sistema:                          |
+| restricciones:           |                                                                        |
+|                          | - Vacío: "El año de publicación es obligatorio"                        |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - No numérico o más de 4 dígitos: "El año de publicación debe ser un   |
+|                          |   número de hasta 4 dígitos"                                           |
+|                          |                                                                        |
+|                          | - Menor a 1450: "El año de publicación no puede ser menor a 1450"      |
+|                          |                                                                        |
+|                          | - Mayor al año actual: "El año de publicación no puede ser mayor al    |
+|                          |   año actual"                                                          |
+|                          |                                                                        |
+|                          | Valores límite: 1449 ✗, 1450 ✓, año actual ✓, año actual + 1 ✗.        |
+|                          |                                                                        |
+|                          | Implementado en: `validarAnioPublicacion`                              |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-* **Valores límite:** 1 ✗, 2 ✓, 150 ✓, 151 ✗.
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-11**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar género                                                         |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá elegir el género del libro solo de una lista de   |
+|                          | valores permitidos.                                                    |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Uno de Novela, Cuento, Poesía, Ciencia, Historia, Tecnología, |
+| restricciones:           |   Infantil, Otro (lista desplegable).                                  |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Condiciones y mensaje que muestra el sistema:                          |
+|                          |                                                                        |
+|                          | - Sin seleccionar: "Debe seleccionar un género"                        |
+|                          |                                                                        |
+|                          | - Valor fuera de la lista: "El género seleccionado no es válido"       |
+|                          |                                                                        |
+|                          | Implementado en: `validarGenero`                                       |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-09** | **Validar editorial** |
-|---|---|
-| Prioridad | Alta |
-| Implementado en | `validarEditorial` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-12**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar número de páginas                                              |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará que el número de páginas sea obligatorio y un      |
+|                          | entero entre 1 y 5000.                                                 |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Condiciones y mensaje que muestra el sistema:                          |
+| restricciones:           |                                                                        |
+|                          | - Vacío: "El número de páginas es obligatorio"                         |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - No entero, negativo o más de 4 dígitos: "El número de páginas debe   |
+|                          |   ser un número entero"                                                |
+|                          |                                                                        |
+|                          | - Menor a 1 o mayor a 5000: "El número de páginas debe estar entre 1 y |
+|                          |   5000"                                                                |
+|                          |                                                                        |
+|                          | Valores límite: 0 ✗, 1 ✓, 5000 ✓, 5001 ✗.                              |
+|                          |                                                                        |
+|                          | Implementado en: `validarNumeroPaginas`                                |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
 
-| Condición | Mensaje |
-|-----------|---------|
-| Vacía | La editorial es obligatoria |
-| Caracteres distintos de letras, números, espacios y `. , & ' -` | La editorial contiene caracteres no permitidos |
-| Menos de 2 o más de 100 caracteres | La editorial debe tener entre 2 y 100 caracteres |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-13**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar stock                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará que el stock sea obligatorio y un entero entre 0 y |
+|                          | 500 ejemplares.                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Condiciones y mensaje que muestra el sistema:                          |
+| restricciones:           |                                                                        |
+|                          | - Vacío: "El stock es obligatorio"                                     |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - No entero, negativo o más de 3 dígitos: "El stock debe ser un número |
+|                          |   entero no negativo"                                                  |
+|                          |                                                                        |
+|                          | - Mayor a 500: "El stock no puede superar 500 ejemplares"              |
+|                          |                                                                        |
+|                          | Valores límite: -1 ✗, 0 ✓, 500 ✓, 501 ✗.                               |
+|                          |                                                                        |
+|                          | Implementado en: `validarStock`                                        |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-* **Valores límite:** 1 ✗, 2 ✓, 100 ✓, 101 ✗. Ejemplo inválido: `Editorial#1`.
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-14**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Impedir eliminar libros con préstamos                                  |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema no permitirá eliminar un libro que tenga préstamos          |
+|                          | registrados.                                                           |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Un libro con al menos un préstamo (de cualquier estado) no se |
+| restricciones:           |   elimina.                                                             |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | - Mensaje: "No se puede eliminar: el libro tiene préstamos             |
+|                          |   registrados".                                                        |
+|                          |                                                                        |
+|                          | Criterio de aceptación: El libro id 1 no se elimina; el id 9 sí.       |
+|                          |                                                                        |
+|                          | Implementado en: `LibroDAO.tienePrestamos`                             |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
-| **RF-LIB-10** | **Validar año de publicación** |
-|---|---|
-| Prioridad | Alta |
-| Implementado en | `validarAnioPublicacion` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-15**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Exigir un libro seleccionado y existente                               |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema exigirá que haya un libro seleccionado y que exista en la   |
+|                          | base de datos para modificarlo o eliminarlo.                           |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Condiciones y mensaje que muestra el sistema:                          |
+| restricciones:           |                                                                        |
+|                          | - Ningún libro seleccionado (id ≤ 0) al modificar: "Debe seleccionar   |
+| ESPECIFICACIÓN           |   un libro para modificar"                                             |
+|                          |                                                                        |
+|                          | - Ningún libro seleccionado (id ≤ 0) al eliminar: "Debe seleccionar un |
+|                          |   libro para eliminar"                                                 |
+|                          |                                                                        |
+|                          | - El libro fue borrado antes de modificarlo: "El libro ya no existe en |
+|                          |   la base de datos"                                                    |
+|                          |                                                                        |
+|                          | - El libro no existe al eliminar: "El libro no existe"                 |
+|                          |                                                                        |
+|                          | Implementado en: `actualizarLibro`, `eliminarLibro`                    |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
 
-| Condición | Mensaje |
-|-----------|---------|
-| Vacío | El año de publicación es obligatorio |
-| No numérico o más de 4 dígitos | El año de publicación debe ser un número de hasta 4 dígitos |
-| Menor a 1450 | El año de publicación no puede ser menor a 1450 |
-| Mayor al año actual | El año de publicación no puede ser mayor al año actual |
-
-* **Valores límite:** 1449 ✗, 1450 ✓, año actual ✓, año actual + 1 ✗.
-
-| **RF-LIB-11** | **Validar género** |
-|---|---|
-| Prioridad | Alta |
-| Regla | uno de Novela, Cuento, Poesía, Ciencia, Historia, Tecnología, Infantil, Otro (lista desplegable). |
-| Implementado en | `validarGenero` |
-
-| Condición | Mensaje |
-|-----------|---------|
-| Sin seleccionar | Debe seleccionar un género |
-| Valor fuera de la lista | El género seleccionado no es válido |
-
-| **RF-LIB-12** | **Validar número de páginas** |
-|---|---|
-| Prioridad | Media |
-| Implementado en | `validarNumeroPaginas` |
-
-| Condición | Mensaje |
-|-----------|---------|
-| Vacío | El número de páginas es obligatorio |
-| No entero, negativo o más de 4 dígitos | El número de páginas debe ser un número entero |
-| Menor a 1 o mayor a 5000 | El número de páginas debe estar entre 1 y 5000 |
-
-* **Valores límite:** 0 ✗, 1 ✓, 5000 ✓, 5001 ✗.
-
-| **RF-LIB-13** | **Validar stock** |
-|---|---|
-| Prioridad | Alta |
-| Implementado en | `validarStock` |
-
-| Condición | Mensaje |
-|-----------|---------|
-| Vacío | El stock es obligatorio |
-| No entero, negativo o más de 3 dígitos | El stock debe ser un número entero no negativo |
-| Mayor a 500 | El stock no puede superar 500 ejemplares |
-
-* **Valores límite:** -1 ✗, 0 ✓, 500 ✓, 501 ✗.
-
-| **RF-LIB-14** | **Impedir eliminar libros con préstamos** |
-|---|---|
-| Prioridad | Alta |
-| Regla | un libro con al menos un préstamo (de cualquier estado) no se elimina. |
-| Mensaje | "No se puede eliminar: el libro tiene préstamos registrados". |
-| Criterio de aceptación | el libro id 1 no se elimina; el id 9 sí. |
-| Implementado en | `LibroDAO.tienePrestamos` |
-
-| **RF-LIB-15** | **Exigir un libro seleccionado y existente** |
-|---|---|
-| Prioridad | Media |
-| Implementado en | `actualizarLibro`, `eliminarLibro` |
-
-| Condición | Mensaje |
-|-----------|---------|
-| Ningún libro seleccionado (id ≤ 0) al modificar | Debe seleccionar un libro para modificar |
-| Ningún libro seleccionado (id ≤ 0) al eliminar | Debe seleccionar un libro para eliminar |
-| El libro fue borrado antes de modificarlo | El libro ya no existe en la base de datos |
-| El libro no existe al eliminar | El libro no existe |
-
-| **RF-LIB-16** | **Informar el resultado de cada operación** |
-|---|---|
-| Prioridad | Media |
-| Descripción | después de guardar o eliminar, el sistema debe mostrar un mensaje de éxito o de error; si el error es de un campo, el cursor se coloca en ese campo y el formulario no se cierra. |
-| Implementado en | `util.Respuesta`, `LibroDialog` |
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LIB-16**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Informar el resultado de cada operación                                |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | Después de guardar o eliminar, el sistema debe mostrar un mensaje de   |
+|                          | éxito o de error; si el error es de un campo, el cursor se coloca en   |
+| DEFINICIÓN               | ese campo y el formulario no se cierra.                                |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | Implementado en: `util.Respuesta`, `LibroDialog`                       |
+| restricciones:           |                                                                        |
+|                          |                                                                        |
+| ESPECIFICACIÓN           |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
 
 #### 3.1.2 Casos de uso
 
@@ -512,17 +1037,292 @@ Sirve para el documento de pruebas: cada prueba debe citar el RF que verifica.
 
 #### 3.2.1 Requerimientos funcionales (CRU)
 
-| ID | Nombre | Descripción / regla | Mensaje de error esperado | Prioridad |
-|----|--------|---------------------|---------------------------|-----------|
-| RF-AUT-01 | Registrar autor | Guarda un autor nuevo con nombres, apellidos, nacionalidad, fecha de nacimiento y biografía. | — ("Autor registrado correctamente") | Alta |
-| RF-AUT-02 | Listar y buscar autores | Muestra todos o filtra por nombres, apellidos o nacionalidad. | — | Media |
-| RF-AUT-03 | Modificar autor | Cambia los datos del autor seleccionado. | Debe seleccionar un autor para modificar | Alta |
-| RF-AUT-04 | Eliminar autor | Borra el autor seleccionado con confirmación. | Debe seleccionar un autor para eliminar / El autor no existe | Alta |
-| RF-AUT-05 | Validar nombres y apellidos | Obligatorios, solo letras (y `. ' -`), 2 a 60 caracteres. | Los nombres son obligatorios / solo deben contener letras / deben tener entre 2 y 60 caracteres | Alta |
-| RF-AUT-06 | Validar nacionalidad | Obligatoria, solo letras y espacios, 3 a 50 caracteres. | La nacionalidad es obligatoria / solo debe contener letras / debe tener entre 3 y 50 caracteres | Alta |
-| RF-AUT-07 | Validar fecha de nacimiento | Opcional; si se escribe: `dd/MM/yyyy`, fecha real, no futura, no anterior al año 1000. | …debe tener el formato dd/MM/yyyy y ser una fecha real / no puede ser futura / no puede ser anterior al año 1000 | Media |
-| RF-AUT-08 | Validar biografía | Opcional, máximo 255 caracteres. | La biografía no puede superar 255 caracteres | Baja |
-| RF-AUT-09 | Controlar autor duplicado | No se repiten los mismos nombres y apellidos. | Ya existe un autor registrado con ese nombre | Alta |
+##### Resumen
+
+| ID | Nombre | Prioridad |
+|----|--------|-----------|
+| RF-AUT-01 | Registrar autor | Alta |
+| RF-AUT-02 | Listar y buscar autores | Media |
+| RF-AUT-03 | Modificar autor | Alta |
+| RF-AUT-04 | Eliminar autor | Alta |
+| RF-AUT-05 | Validar nombres y apellidos | Alta |
+| RF-AUT-06 | Validar nacionalidad | Alta |
+| RF-AUT-07 | Validar fecha de nacimiento | Media |
+| RF-AUT-08 | Validar biografía | Baja |
+| RF-AUT-09 | Controlar autor duplicado | Alta |
+
+##### Especificación
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Registrar autor                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá el ingreso de los datos de un autor nuevo         |
+|                          | (nombres, apellidos, nacionalidad, fecha de nacimiento y biografía) y  |
+| DEFINICIÓN               | lo guardará en la base de datos.                                       |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Guarda un autor nuevo con nombres, apellidos, nacionalidad,   |
+| restricciones:           |   fecha de nacimiento y biografía.                                     |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | - Mensaje de éxito: "Autor registrado correctamente"                   |
+|                          |                                                                        |
+|                          | Implementado en: `AutorController.registrarAutor`, `AutorDAO.insertar` |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-02**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Listar y buscar autores                                                |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema mostrará todos los autores registrados y permitirá          |
+|                          | buscarlos por nombres, apellidos o nacionalidad.                       |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Muestra todos o filtra por nombres, apellidos o nacionalidad. |
+| restricciones:           |                                                                        |
+|                          | Implementado en: `AutorController.listarAutores`, `buscarAutores`,     |
+| ESPECIFICACIÓN           | `AutorDAO.buscar`                                                      |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-03**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Modificar autor                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá modificar los datos del autor seleccionado.       |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Cambia los datos del autor seleccionado.                      |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Debe seleccionar un autor para modificar"                           |
+|                          |                                                                        |
+|                          | Implementado en: `AutorController.actualizarAutor`,                    |
+|                          | `AutorDAO.actualizar`                                                  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-04**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Eliminar autor                                                         |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá eliminar el autor seleccionado, previa            |
+|                          | confirmación.                                                          |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Borra el autor seleccionado con confirmación.                 |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Debe seleccionar un autor para eliminar"                            |
+|                          |                                                                        |
+|                          | - "El autor no existe"                                                 |
+|                          |                                                                        |
+|                          | Implementado en: `AutorController.eliminarAutor`, `AutorDAO.eliminar`  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-05**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar nombres y apellidos                                            |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará los nombres y apellidos del autor.                 |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatorios, solo letras (y `. ' -`), 2 a 60 caracteres.     |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Los nombres son obligatorios"                                       |
+|                          |                                                                        |
+|                          | - "Los nombres solo deben contener letras"                             |
+|                          |                                                                        |
+|                          | - "Los nombres deben tener entre 2 y 60 caracteres"                    |
+|                          |                                                                        |
+|                          | - "Los apellidos son obligatorios"                                     |
+|                          |                                                                        |
+|                          | - "Los apellidos solo deben contener letras"                           |
+|                          |                                                                        |
+|                          | - "Los apellidos deben tener entre 2 y 60 caracteres"                  |
+|                          |                                                                        |
+|                          | Implementado en: `AutorController.validarNombres`, `validarApellidos`  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-06**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar nacionalidad                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la nacionalidad del autor.                         |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatoria, solo letras y espacios, 3 a 50 caracteres.       |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "La nacionalidad es obligatoria"                                     |
+|                          |                                                                        |
+|                          | - "La nacionalidad solo debe contener letras"                          |
+|                          |                                                                        |
+|                          | - "La nacionalidad debe tener entre 3 y 50 caracteres"                 |
+|                          |                                                                        |
+|                          | Implementado en: `AutorController.validarNacionalidad`                 |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-07**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar fecha de nacimiento                                            |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la fecha de nacimiento del autor cuando se         |
+|                          | escriba.                                                               |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Opcional; si se escribe: `dd/MM/yyyy`, fecha real, no futura, |
+| restricciones:           |   no anterior al año 1000.                                             |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "La fecha de nacimiento debe tener el formato dd/MM/yyyy y ser una   |
+|                          |   fecha real"                                                          |
+|                          |                                                                        |
+|                          | - "La fecha de nacimiento no puede ser futura"                         |
+|                          |                                                                        |
+|                          | - "La fecha de nacimiento no puede ser anterior al año 1000"           |
+|                          |                                                                        |
+|                          | Implementado en: `AutorController.validarFechaNacimiento`              |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-08**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar biografía                                                      |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la longitud de la biografía del autor.             |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Opcional, máximo 255 caracteres.                              |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "La biografía no puede superar 255 caracteres"                       |
+|                          |                                                                        |
+|                          | Implementado en: `AutorController.validarBiografia`                    |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Baja                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-AUT-09**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Controlar autor duplicado                                              |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema no permitirá registrar dos veces un autor con los mismos    |
+|                          | nombres y apellidos.                                                   |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: No se repiten los mismos nombres y apellidos.                 |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Ya existe un autor registrado con ese nombre"                       |
+|                          |                                                                        |
+|                          | Implementado en: `AutorDAO.existeNombre`                               |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
 #### 3.2.2 Casos de uso
 
@@ -556,19 +1356,360 @@ Capturas de las pantallas del módulo funcionando. Pegue cada captura en el cuad
 
 #### 3.3.1 Requerimientos funcionales (CRU)
 
-| ID | Nombre | Descripción / regla | Mensaje de error esperado | Prioridad |
-|----|--------|---------------------|---------------------------|-----------|
-| RF-LEC-01 | Registrar lector | Guarda un lector con cédula, nombres, apellidos, correo, teléfono, dirección y estado. | — | Alta |
-| RF-LEC-02 | Listar y buscar lectores | Muestra todos o filtra por cédula, nombres, apellidos o correo. | — | Media |
-| RF-LEC-03 | Modificar lector | Cambia los datos del lector seleccionado. | Debe seleccionar un lector para modificar | Alta |
-| RF-LEC-04 | Eliminar lector | Borra el lector seleccionado con confirmación. | Debe seleccionar un lector para eliminar / El lector no existe | Alta |
-| RF-LEC-05 | Validar cédula ecuatoriana | Obligatoria, 10 dígitos, provincia 01–24 o 30, tercer dígito < 6, dígito verificador (módulo 10) correcto. | La cédula es obligatoria / debe tener exactamente 10 dígitos numéricos / …no son un código de provincia válido / El tercer dígito… debe ser menor a 6 / …dígito verificador incorrecto | Alta |
-| RF-LEC-06 | Validar nombres y apellidos | Obligatorios, solo letras y espacios, 2 a 60 caracteres. | …son obligatorios / …solo deben contener letras y espacios / …entre 2 y 60 caracteres | Alta |
-| RF-LEC-07 | Validar correo | Obligatorio, formato `usuario@dominio.ext`, máximo 100 caracteres. | El correo es obligatorio / no puede superar 100 caracteres / no tiene un formato válido | Alta |
-| RF-LEC-08 | Validar teléfono | Obligatorio, celular de 10 dígitos que empieza con 09. | El teléfono es obligatorio / debe tener 10 dígitos y empezar con 09 | Media |
-| RF-LEC-09 | Validar dirección y estado | Dirección opcional, máx. 150; estado ACTIVO o SUSPENDIDO. | La dirección no puede superar 150 caracteres / Debe seleccionar un estado | Baja |
-| RF-LEC-10 | Controlar cédula y correo únicos | No se repite la cédula ni el correo de otro lector. | Ya existe un lector registrado con esa cédula / con ese correo | Alta |
-| RF-LEC-11 | Impedir eliminar lectores con préstamos | Un lector con préstamos no se elimina. | No se puede eliminar: el lector tiene préstamos registrados | Alta |
+##### Resumen
+
+| ID | Nombre | Prioridad |
+|----|--------|-----------|
+| RF-LEC-01 | Registrar lector | Alta |
+| RF-LEC-02 | Listar y buscar lectores | Media |
+| RF-LEC-03 | Modificar lector | Alta |
+| RF-LEC-04 | Eliminar lector | Alta |
+| RF-LEC-05 | Validar cédula ecuatoriana | Alta |
+| RF-LEC-06 | Validar nombres y apellidos | Alta |
+| RF-LEC-07 | Validar correo | Alta |
+| RF-LEC-08 | Validar teléfono | Media |
+| RF-LEC-09 | Validar dirección y estado | Baja |
+| RF-LEC-10 | Controlar cédula y correo únicos | Alta |
+| RF-LEC-11 | Impedir eliminar lectores con préstamos | Alta |
+
+##### Especificación
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Registrar lector                                                       |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá el ingreso de los datos de un lector nuevo        |
+|                          | (cédula, nombres, apellidos, correo, teléfono, dirección y estado) y   |
+| DEFINICIÓN               | lo guardará en la base de datos.                                       |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Guarda un lector con cédula, nombres, apellidos, correo,      |
+| restricciones:           |   teléfono, dirección y estado.                                        |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `LectorController.registrarLector`,                   |
+|                          | `LectorDAO.insertar`                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-02**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Listar y buscar lectores                                               |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema mostrará todos los lectores registrados y permitirá         |
+|                          | buscarlos por cédula, nombres, apellidos o correo.                     |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Muestra todos o filtra por cédula, nombres, apellidos o       |
+| restricciones:           |   correo.                                                              |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `LectorController.listarLectores`, `buscarLectores`,  |
+|                          | `LectorDAO.buscar`                                                     |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-03**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Modificar lector                                                       |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá modificar los datos del lector seleccionado.      |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Cambia los datos del lector seleccionado.                     |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Debe seleccionar un lector para modificar"                          |
+|                          |                                                                        |
+|                          | Implementado en: `LectorController.actualizarLector`,                  |
+|                          | `LectorDAO.actualizar`                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-04**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Eliminar lector                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá eliminar el lector seleccionado, previa           |
+|                          | confirmación.                                                          |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Borra el lector seleccionado con confirmación.                |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Debe seleccionar un lector para eliminar"                           |
+|                          |                                                                        |
+|                          | - "El lector no existe"                                                |
+|                          |                                                                        |
+|                          | Implementado en: `LectorController.eliminarLector`,                    |
+|                          | `LectorDAO.eliminar`                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-05**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar cédula ecuatoriana                                             |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará que la cédula sea una cédula ecuatoriana válida.   |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatoria, 10 dígitos, provincia 01–24 o 30, tercer dígito  |
+| restricciones:           |   < 6, dígito verificador (módulo 10) correcto.                        |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "La cédula es obligatoria"                                           |
+|                          |                                                                        |
+|                          | - "La cédula debe tener exactamente 10 dígitos numéricos"              |
+|                          |                                                                        |
+|                          | - "Los dos primeros dígitos de la cédula no son un código de provincia |
+|                          |   válido"                                                              |
+|                          |                                                                        |
+|                          | - "El tercer dígito de la cédula debe ser menor a 6"                   |
+|                          |                                                                        |
+|                          | - "La cédula no es válida (dígito verificador incorrecto)"             |
+|                          |                                                                        |
+|                          | Implementado en: `LectorController.validarCedula`,                     |
+|                          | `digitoVerificadorValido`                                              |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-06**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar nombres y apellidos                                            |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará los nombres y apellidos del lector.                |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatorios, solo letras y espacios, 2 a 60 caracteres.      |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Los nombres son obligatorios"                                       |
+|                          |                                                                        |
+|                          | - "Los nombres solo deben contener letras y espacios"                  |
+|                          |                                                                        |
+|                          | - "Los nombres deben tener entre 2 y 60 caracteres (y los mismos       |
+|                          |   mensajes para los apellidos)"                                        |
+|                          |                                                                        |
+|                          | Implementado en: `LectorController.validarNombres`, `validarApellidos` |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-07**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar correo                                                         |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará el correo electrónico del lector.                  |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatorio, formato `usuario@dominio.ext`, máximo 100        |
+| restricciones:           |   caracteres.                                                          |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "El correo es obligatorio"                                           |
+|                          |                                                                        |
+|                          | - "El correo no puede superar 100 caracteres"                          |
+|                          |                                                                        |
+|                          | - "El correo no tiene un formato válido (ejemplo: nombre@correo.com)"  |
+|                          |                                                                        |
+|                          | Implementado en: `LectorController.validarCorreo`                      |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-08**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar teléfono                                                       |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará el número de celular del lector.                   |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatorio, celular de 10 dígitos que empieza con 09.        |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "El teléfono es obligatorio"                                         |
+|                          |                                                                        |
+|                          | - "El teléfono debe tener 10 dígitos y empezar con 09"                 |
+|                          |                                                                        |
+|                          | Implementado en: `LectorController.validarTelefono`                    |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-09**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar dirección y estado                                             |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la dirección y el estado del lector.               |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Dirección opcional, máx. 150; estado ACTIVO o SUSPENDIDO.     |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "La dirección no puede superar 150 caracteres"                       |
+|                          |                                                                        |
+|                          | - "Debe seleccionar un estado"                                         |
+|                          |                                                                        |
+|                          | - "El estado seleccionado no es válido"                                |
+|                          |                                                                        |
+|                          | Implementado en: `LectorController.validarDireccion`, `validarEstado`  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Baja                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-10**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Controlar cédula y correo únicos                                       |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema no permitirá que dos lectores tengan la misma cédula o el   |
+|                          | mismo correo.                                                          |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: No se repite la cédula ni el correo de otro lector.           |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Ya existe un lector registrado con esa cédula"                      |
+|                          |                                                                        |
+|                          | - "Ya existe un lector registrado con ese correo"                      |
+|                          |                                                                        |
+|                          | Implementado en: `LectorDAO.existeCedula`, `existeCorreo`              |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-LEC-11**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Impedir eliminar lectores con préstamos                                |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema no permitirá eliminar un lector que tenga préstamos         |
+|                          | registrados.                                                           |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Un lector con préstamos no se elimina.                        |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "No se puede eliminar: el lector tiene préstamos registrados"        |
+|                          |                                                                        |
+|                          | Implementado en: `LectorDAO.tienePrestamos`                            |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
 #### 3.3.2 Casos de uso
 
@@ -602,20 +1743,370 @@ Capturas de las pantallas del módulo funcionando. Pegue cada captura en el cuad
 
 #### 3.4.1 Requerimientos funcionales (CRU)
 
-| ID | Nombre | Descripción / regla | Mensaje de error esperado | Prioridad |
-|----|--------|---------------------|---------------------------|-----------|
-| RF-PRE-01 | Registrar préstamo | Registra el préstamo de un libro a un lector con estado ACTIVO. | — ("Préstamo registrado correctamente") | Alta |
-| RF-PRE-02 | Listar y buscar préstamos | Muestra todos o filtra por título, lector, cédula o estado. | — | Media |
-| RF-PRE-03 | Modificar préstamo | Cambia los datos de un préstamo no devuelto. | No se puede modificar un préstamo que ya fue devuelto | Alta |
-| RF-PRE-04 | Eliminar préstamo | Borra un préstamo sin devolución y devuelve el ejemplar al stock. | No se puede eliminar: el préstamo tiene una devolución registrada | Alta |
-| RF-PRE-05 | Validar libro y lector | Ambos obligatorios, elegidos de listas. | El libro seleccionado no existe / El lector seleccionado no existe | Alta |
-| RF-PRE-06 | Validar fecha de préstamo | Obligatoria, `dd/MM/yyyy`, fecha real, no futura. | La fecha del préstamo es obligatoria / …no puede ser futura | Alta |
-| RF-PRE-07 | Validar fecha límite | Obligatoria, no anterior al préstamo, máximo 30 días después. | …no puede ser anterior a la fecha del préstamo / …no puede superar 30 días desde el préstamo | Alta |
-| RF-PRE-08 | Verificar stock | El libro debe tener al menos 1 ejemplar. | El libro no tiene ejemplares disponibles (stock 0) | Alta |
-| RF-PRE-09 | Verificar lector habilitado | El lector debe estar ACTIVO y tener menos de 3 préstamos sin devolver. | El lector está SUSPENDIDO y no puede recibir préstamos / El lector ya tiene 3 préstamos sin devolver | Alta |
-| RF-PRE-10 | Actualizar stock | Al registrar resta 1 al stock; al eliminar un préstamo pendiente lo suma (en una transacción). | — | Alta |
-| RF-PRE-11 | Marcar vencidos | Un préstamo ACTIVO cuya fecha límite ya pasó se muestra como VENCIDO. | — | Media |
-| RF-PRE-12 | Validar observación | Opcional, máximo 255 caracteres. | La observación no puede superar 255 caracteres | Baja |
+##### Resumen
+
+| ID | Nombre | Prioridad |
+|----|--------|-----------|
+| RF-PRE-01 | Registrar préstamo | Alta |
+| RF-PRE-02 | Listar y buscar préstamos | Media |
+| RF-PRE-03 | Modificar préstamo | Alta |
+| RF-PRE-04 | Eliminar préstamo | Alta |
+| RF-PRE-05 | Validar libro y lector | Alta |
+| RF-PRE-06 | Validar fecha de préstamo | Alta |
+| RF-PRE-07 | Validar fecha límite | Alta |
+| RF-PRE-08 | Verificar stock | Alta |
+| RF-PRE-09 | Verificar lector habilitado | Alta |
+| RF-PRE-10 | Actualizar stock | Alta |
+| RF-PRE-11 | Marcar vencidos | Media |
+| RF-PRE-12 | Validar observación | Baja |
+
+##### Especificación
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Registrar préstamo                                                     |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá registrar el préstamo de un libro a un lector,    |
+|                          | con fecha de préstamo, fecha límite y observación; el préstamo queda   |
+| DEFINICIÓN               | en estado ACTIVO.                                                      |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Registra el préstamo de un libro a un lector con estado       |
+| restricciones:           |   ACTIVO.                                                              |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | - Mensaje de éxito: "Préstamo registrado correctamente"                |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.registrarPrestamo`,               |
+|                          | `PrestamoDAO.insertar`                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-02**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Listar y buscar préstamos                                              |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema mostrará todos los préstamos y permitirá buscarlos por      |
+|                          | título del libro, lector, cédula o estado.                             |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Muestra todos o filtra por título, lector, cédula o estado.   |
+| restricciones:           |                                                                        |
+|                          | Implementado en: `PrestamoController.listarPrestamos`,                 |
+| ESPECIFICACIÓN           | `buscarPrestamos`, `PrestamoDAO.buscar`                                |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-03**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Modificar préstamo                                                     |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá modificar un préstamo que todavía no ha sido      |
+|                          | devuelto.                                                              |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Cambia los datos de un préstamo no devuelto.                  |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "No se puede modificar un préstamo que ya fue devuelto"              |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.actualizarPrestamo`,              |
+|                          | `PrestamoDAO.actualizar`                                               |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-04**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Eliminar préstamo                                                      |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá eliminar un préstamo que no tenga devolución,     |
+|                          | devolviendo el ejemplar al stock.                                      |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Borra un préstamo sin devolución y devuelve el ejemplar al    |
+| restricciones:           |   stock.                                                               |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "No se puede eliminar: el préstamo tiene una devolución registrada"  |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.eliminarPrestamo`,                |
+|                          | `PrestamoDAO.eliminar`, `tieneDevolucion`                              |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-05**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar libro y lector                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema exigirá elegir de una lista el libro y el lector del        |
+|                          | préstamo.                                                              |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Ambos obligatorios, elegidos de listas.                       |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "El libro seleccionado no existe"                                    |
+|                          |                                                                        |
+|                          | - "El lector seleccionado no existe"                                   |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.validarLibro`, `validarLector`    |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-06**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar fecha de préstamo                                              |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la fecha del préstamo.                             |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatoria, `dd/MM/yyyy`, fecha real, no futura.             |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "La fecha del préstamo es obligatoria"                               |
+|                          |                                                                        |
+|                          | - "La fecha del préstamo debe tener el formato dd/MM/yyyy y ser una    |
+|                          |   fecha real"                                                          |
+|                          |                                                                        |
+|                          | - "La fecha del préstamo no puede ser futura"                          |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.validarFechaPrestamo`             |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-07**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar fecha límite                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la fecha límite de devolución del préstamo.        |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatoria, no anterior al préstamo, máximo 30 días después. |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "La fecha límite es obligatoria"                                     |
+|                          |                                                                        |
+|                          | - "La fecha límite no puede ser anterior a la fecha del préstamo"      |
+|                          |                                                                        |
+|                          | - "La fecha límite no puede superar 30 días desde el préstamo"         |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.validarFechaLimite`               |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-08**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Verificar stock                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema no permitirá prestar un libro que no tenga ejemplares       |
+|                          | disponibles.                                                           |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: El libro debe tener al menos 1 ejemplar.                      |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "El libro no tiene ejemplares disponibles (stock 0)"                 |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.verificarStock`                   |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-09**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Verificar lector habilitado                                            |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema solo permitirá prestar a lectores ACTIVOS con menos de 3    |
+|                          | préstamos sin devolver.                                                |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: El lector debe estar ACTIVO y tener menos de 3 préstamos sin  |
+| restricciones:           |   devolver.                                                            |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "El lector está SUSPENDIDO y no puede recibir préstamos"             |
+|                          |                                                                        |
+|                          | - "El lector ya tiene 3 préstamos sin devolver"                        |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.verificarLector`,                 |
+|                          | `PrestamoDAO.contarPendientesLector`                                   |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-10**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Actualizar stock                                                       |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema actualizará el stock del libro al registrar o eliminar un   |
+|                          | préstamo.                                                              |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Al registrar resta 1 al stock; al eliminar un préstamo        |
+| restricciones:           |   pendiente lo suma (en una transacción).                              |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `PrestamoDAO.insertar`, `actualizar`, `eliminar`      |
+|                          | (transacción)                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-11**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Marcar vencidos                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema mostrará como VENCIDO un préstamo ACTIVO cuya fecha límite  |
+|                          | ya pasó.                                                               |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Un préstamo ACTIVO cuya fecha límite ya pasó se muestra como  |
+| restricciones:           |   VENCIDO.                                                             |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `PrestamoController.calcularEstado`                   |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-PRE-12**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar observación                                                    |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la longitud de la observación del préstamo.        |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Opcional, máximo 255 caracteres.                              |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "La observación no puede superar 255 caracteres"                     |
+|                          |                                                                        |
+|                          | Implementado en: `PrestamoController.validarObservacion`               |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Baja                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
 #### 3.4.2 Casos de uso
 
@@ -658,18 +2149,308 @@ Capturas de las pantallas del módulo funcionando. Pegue cada captura en el cuad
 
 #### 3.5.1 Requerimientos funcionales (CRU)
 
-| ID | Nombre | Descripción / regla | Mensaje de error esperado | Prioridad |
-|----|--------|---------------------|---------------------------|-----------|
-| RF-DEV-01 | Registrar devolución | Registra la devolución de un préstamo pendiente. | — ("Devolución registrada. Días de retraso: N. Multa: $X") | Alta |
-| RF-DEV-02 | Listar y buscar devoluciones | Muestra todas o filtra por título, lector o estado del libro. | — | Media |
-| RF-DEV-03 | Modificar devolución | Cambia fecha, estado del libro u observación y recalcula multa y stock. | Debe seleccionar una devolución para modificar | Alta |
-| RF-DEV-04 | Eliminar devolución | Borra la devolución; el préstamo vuelve a ACTIVO o VENCIDO y se ajusta el stock. | No se puede eliminar: el ejemplar ya se volvió a prestar (stock 0) | Alta |
-| RF-DEV-05 | Validar préstamo pendiente | Solo préstamos ACTIVO o VENCIDO sin devolución. | El préstamo no existe / El préstamo ya tiene una devolución registrada | Alta |
-| RF-DEV-06 | Validar fecha de devolución | Obligatoria, fecha real, no futura, no anterior a la fecha del préstamo. | La fecha de devolución es obligatoria / …no puede ser futura / …no puede ser anterior a la fecha del préstamo | Alta |
-| RF-DEV-07 | Validar estado del libro | BUENO, DANADO o PERDIDO. Observación opcional, máx. 255. | Debe seleccionar el estado del libro | Alta |
-| RF-DEV-08 | Calcular días de retraso | Días entre la fecha límite y la de devolución; mínimo 0. | — | Alta |
-| RF-DEV-09 | Calcular multa | $0.50 × días de retraso, + $5.00 si DANADO, + $20.00 si PERDIDO. | — | Alta |
-| RF-DEV-10 | Actualizar préstamo y stock | El préstamo pasa a DEVUELTO; el ejemplar vuelve al stock salvo si se perdió. | — | Alta |
+##### Resumen
+
+| ID | Nombre | Prioridad |
+|----|--------|-----------|
+| RF-DEV-01 | Registrar devolución | Alta |
+| RF-DEV-02 | Listar y buscar devoluciones | Media |
+| RF-DEV-03 | Modificar devolución | Alta |
+| RF-DEV-04 | Eliminar devolución | Alta |
+| RF-DEV-05 | Validar préstamo pendiente | Alta |
+| RF-DEV-06 | Validar fecha de devolución | Alta |
+| RF-DEV-07 | Validar estado del libro | Alta |
+| RF-DEV-08 | Calcular días de retraso | Alta |
+| RF-DEV-09 | Calcular multa | Alta |
+| RF-DEV-10 | Actualizar préstamo y stock | Alta |
+
+##### Especificación
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-01**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Registrar devolución                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá registrar la devolución de un préstamo pendiente, |
+|                          | con fecha de devolución, estado del libro y observación.               |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Registra la devolución de un préstamo pendiente.              |
+| restricciones:           |                                                                        |
+|                          | - Mensaje de éxito: "Devolución registrada. Días de retraso: N. Multa: |
+| ESPECIFICACIÓN           |   $X"                                                                  |
+|                          |                                                                        |
+|                          | Implementado en: `DevolucionController.registrarDevolucion`,           |
+|                          | `DevolucionDAO.insertar`                                               |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-02**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Listar y buscar devoluciones                                           |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema mostrará todas las devoluciones y permitirá buscarlas por   |
+|                          | título, lector o estado del libro.                                     |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Muestra todas o filtra por título, lector o estado del libro. |
+| restricciones:           |                                                                        |
+|                          | Implementado en: `DevolucionController.listarDevoluciones`,            |
+| ESPECIFICACIÓN           | `buscarDevoluciones`, `DevolucionDAO.buscar`                           |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Media                                                                  |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-03**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Modificar devolución                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá modificar la fecha, el estado del libro o la      |
+|                          | observación de una devolución, recalculando la multa y el stock.       |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Cambia fecha, estado del libro u observación y recalcula      |
+| restricciones:           |   multa y stock.                                                       |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "Debe seleccionar una devolución para modificar"                     |
+|                          |                                                                        |
+|                          | Implementado en: `DevolucionController.actualizarDevolucion`,          |
+|                          | `calcularAjusteStock`, `DevolucionDAO.actualizar`                      |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-04**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Eliminar devolución                                                    |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá eliminar una devolución; el préstamo vuelve a     |
+|                          | quedar pendiente y se ajusta el stock.                                 |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Borra la devolución; el préstamo vuelve a ACTIVO o VENCIDO y  |
+| restricciones:           |   se ajusta el stock.                                                  |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "No se puede eliminar: el ejemplar ya se volvió a prestar (stock 0)" |
+|                          |                                                                        |
+|                          | Implementado en: `DevolucionController.eliminarDevolucion`,            |
+|                          | `DevolucionDAO.eliminar`                                               |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-05**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar préstamo pendiente                                             |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema solo permitirá devolver préstamos ACTIVO o VENCIDO que no   |
+|                          | tengan devolución.                                                     |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Solo préstamos ACTIVO o VENCIDO sin devolución.               |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "El préstamo no existe"                                              |
+|                          |                                                                        |
+|                          | - "El préstamo ya tiene una devolución registrada"                     |
+|                          |                                                                        |
+|                          | Implementado en: `DevolucionController.verificarPrestamoPendiente`,    |
+|                          | `listarPrestamosPendientes`                                            |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-06**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar fecha de devolución                                            |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema validará la fecha de devolución.                            |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Obligatoria, fecha real, no futura, no anterior a la fecha    |
+| restricciones:           |   del préstamo.                                                        |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Mensajes de error que muestra el sistema:                              |
+|                          |                                                                        |
+|                          | - "La fecha de devolución es obligatoria"                              |
+|                          |                                                                        |
+|                          | - "La fecha de devolución no puede ser futura"                         |
+|                          |                                                                        |
+|                          | - "La fecha de devolución no puede ser anterior a la fecha del         |
+|                          |   préstamo"                                                            |
+|                          |                                                                        |
+|                          | Implementado en: `DevolucionController.validarFechaDevolucion`         |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-07**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Validar estado del libro                                               |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema permitirá elegir el estado del libro devuelto de una lista  |
+|                          | y validará la observación.                                             |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: BUENO, DANADO o PERDIDO. Observación opcional, máx. 255.      |
+| restricciones:           |                                                                        |
+|                          | Mensajes de error que muestra el sistema:                              |
+| ESPECIFICACIÓN           |                                                                        |
+|                          | - "Debe seleccionar el estado del libro"                               |
+|                          |                                                                        |
+|                          | - "El estado del libro no es válido"                                   |
+|                          |                                                                        |
+|                          | - "La observación no puede superar 255 caracteres"                     |
+|                          |                                                                        |
+|                          | Implementado en: `DevolucionController.validarEstadoLibro`,            |
+|                          | `validarObservacion`                                                   |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-08**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Calcular días de retraso                                               |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema calculará automáticamente los días de retraso de la         |
+|                          | devolución.                                                            |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: Días entre la fecha límite y la de devolución; mínimo 0.      |
+| restricciones:           |                                                                        |
+|                          | Implementado en: `DevolucionController.calcularDiasRetraso`            |
+| ESPECIFICACIÓN           |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-09**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Calcular multa                                                         |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema calculará automáticamente la multa de la devolución.        |
+|                          |                                                                        |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: $0.50 × días de retraso, + $5.00 si DANADO, + $20.00 si       |
+| restricciones:           |   PERDIDO.                                                             |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `DevolucionController.calcularMulta`                  |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
+
++--------------------------+------------------------------------------------------------------------+
+| Número:                  | **RF-DEV-10**                                                          |
++--------------------------+------------------------------------------------------------------------+
+| Título:                  | Actualizar préstamo y stock                                            |
++--------------------------+------------------------------------------------------------------------+
+| Texto:                   | El sistema actualizará el estado del préstamo y el stock del libro al  |
+|                          | registrar una devolución.                                              |
+| DEFINICIÓN               |                                                                        |
++--------------------------+------------------------------------------------------------------------+
+| Tipo:                    | Funcional                                                              |
++--------------------------+------------------------------------------------------------------------+
+| Detalles de requisitos y | - Regla: El préstamo pasa a DEVUELTO; el ejemplar vuelve al stock      |
+| restricciones:           |   salvo si se perdió.                                                  |
+|                          |                                                                        |
+| ESPECIFICACIÓN           | Implementado en: `DevolucionDAO.insertar` (transacción)                |
++--------------------------+------------------------------------------------------------------------+
+| Fecha de revisión y      | 10/11/2026                                                             |
+| versión, AUTOR:          |                                                                        |
+|                          | Versión 1.3                                                            |
+|                          |                                                                        |
+|                          | (                    )                                                 |
++--------------------------+------------------------------------------------------------------------+
+| Prioridad:               | Alta                                                                   |
++--------------------------+------------------------------------------------------------------------+
 
 #### 3.5.2 Casos de uso
 

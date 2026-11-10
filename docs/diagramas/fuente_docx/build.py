@@ -88,6 +88,27 @@ def split_steps(cell):
             nr=copy.deepcopy(r._r); np_._p.append(nr)
             from docx.text.run import Run
             Run(nr,np_).text=t
+def ficha_rf(tbl):
+    # formato de requerimientos funcionales del docente
+    tblPr=tbl._tbl.tblPr
+    b=tblPr.find(qn('w:tblBorders'))
+    for x in b: x.set(qn('w:val'),'single'); x.set(qn('w:sz'),'8'); x.set(qn('w:color'),'000000')
+    colwidths(tbl,[0.207,0.793])
+    for row in tbl.rows:
+        shade(row.cells[0],'CCCCCC')
+        for ci,cell in enumerate(row.cells):
+            for pp in cell.paragraphs:
+                pp.paragraph_format.space_before=Pt(1); pp.paragraph_format.space_after=Pt(2)
+                for r in pp.runs:
+                    r.font.italic=True; r.font.size=Pt(10.5); r.font.name='Calibri'
+                    r.font.color.rgb=RGBColor.from_string('000000' if ci==0 else '0000FF')
+                    if ci==0: r.font.bold=False
+    for row in tbl.rows:
+        row._tr.get_or_add_trPr().append(OxmlElement('w:cantSplit'))
+    for row in tbl.rows[:-1]:
+        for c in row.cells:
+            for pp in c.paragraphs: pp.paragraph_format.keep_with_next=True
+
 def main(path):
     d=Document(path)
     sec=d.sections[0]
@@ -99,6 +120,8 @@ def main(path):
         borders(tbl)
         n=len(tbl.columns)
         first=tbl.rows[0].cells[0].text.strip()
+        if first=='Número:':
+            ficha_rf(tbl); continue
         ficha = n==2 and (first.startswith('RF-') or first=='Elemento' or first=='Datos del documento' or first=='Atributo')
         for c in tbl.rows[0].cells: shade(c,AZUL)
         repeat_header(tbl.rows[0])
