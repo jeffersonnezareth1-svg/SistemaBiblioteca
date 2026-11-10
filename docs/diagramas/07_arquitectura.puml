@@ -1,0 +1,31 @@
+@startuml
+!include estilo.iuml
+title Arquitectura en capas (MVC)
+actor "Usuario" as U
+package "vista (Swing)" {
+  component "LoginFrame\nMenuPrincipalFrame" as V1
+  component "XxxCRUDPanel\nXxxDialog" as V2
+}
+package "controlador" {
+  component "LoginController\nLibroController, AutorController,\nLectorController, PrestamoController,\nDevolucionController" as C
+}
+package "modelo" {
+  component "Usuario, Libro, Autor,\nLector, Prestamo, Devolucion" as M
+}
+package "dao" {
+  component "UsuarioDAO, LibroDAO, AutorDAO,\nLectorDAO, PrestamoDAO, DevolucionDAO" as D
+}
+package "util" {
+  component "Conexion, Respuesta,\nSeguridad, Sesion, Fechas" as UT
+}
+database "MySQL\nbd_biblioteca" as DB
+U --> V1
+V1 --> V2
+V2 --> C : datos del formulario (texto)
+C --> V2 : Respuesta (éxito / error, campo)
+C --> D : objetos del modelo
+C ..> M
+D ..> M
+D --> UT : getConexion()
+UT --> DB : JDBC (PreparedStatement)
+@enduml

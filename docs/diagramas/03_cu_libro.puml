@@ -1,0 +1,32 @@
+@startuml
+!include estilo.iuml
+left to right direction
+title CU-03 a CU-06: Módulo Libro
+actor "Usuario" as U
+rectangle "Módulo Libro" {
+  usecase "CU-03 Registrar libro" as CU03
+  usecase "CU-04 Buscar y listar libros" as CU04
+  usecase "CU-05 Modificar libro" as CU05
+  usecase "CU-06 Eliminar libro" as CU06
+  usecase "Validar datos del libro\n(RF-LIB-06 a RF-LIB-13)" as VAL
+  usecase "Verificar ISBN único\n(RF-LIB-07)" as ISBN
+  usecase "Verificar que no tenga\npréstamos (RF-LIB-14)" as PRE
+  usecase "Confirmar eliminación" as CONF
+  usecase "Mostrar mensaje de error\ny enfocar el campo" as ERR
+}
+actor "Base de datos\nMySQL" as DB
+U --> CU03
+U --> CU04
+U --> CU05
+U --> CU06
+CU03 ..> VAL : <<include>>
+CU05 ..> VAL : <<include>>
+CU03 ..> ISBN : <<include>>
+CU05 ..> ISBN : <<include>>
+CU06 ..> CONF : <<include>>
+CU06 ..> PRE : <<include>>
+ERR ..> VAL : <<extend>>
+ISBN --> DB
+PRE --> DB
+CU04 --> DB
+@enduml

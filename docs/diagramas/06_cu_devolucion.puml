@@ -1,0 +1,27 @@
+@startuml
+!include estilo.iuml
+left to right direction
+title CU-11 y CU-12: Módulo Devolución
+actor "Usuario" as U
+rectangle "Módulo Devolución" {
+  usecase "CU-11 Registrar devolución" as D1
+  usecase "Buscar y listar devoluciones" as D2
+  usecase "Modificar devolución" as D3
+  usecase "Eliminar devolución" as D4
+  usecase "Elegir préstamo pendiente\n(ACTIVO o VENCIDO)" as DP
+  usecase "Validar fecha de devolución" as DF
+  usecase "Calcular días de\nretraso y multa" as DM
+  usecase "Actualizar préstamo\ny stock" as DS
+}
+U --> D1
+U --> D2
+U --> D3
+U --> D4
+D1 ..> DP : <<include>>
+D1 ..> DF : <<include>>
+D1 ..> DM : <<include>>
+D1 ..> DS : <<include>>
+D3 ..> DF : <<include>>
+D3 ..> DM : <<include>>
+D4 ..> DS : <<include>>
+@enduml

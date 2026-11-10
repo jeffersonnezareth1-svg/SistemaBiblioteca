@@ -1,0 +1,40 @@
+@startuml
+!include estilo.iuml
+left to right direction
+title CU-07 y CU-08: Módulos Autor y Lector
+actor "Usuario" as U
+rectangle "Módulo Autor (CU-07)" {
+  usecase "Registrar autor" as A1
+  usecase "Buscar y listar autores" as A2
+  usecase "Modificar autor" as A3
+  usecase "Eliminar autor" as A4
+  usecase "Validar datos del autor" as AV
+  usecase "Verificar autor no repetido" as AD
+}
+rectangle "Módulo Lector (CU-08)" {
+  usecase "Registrar lector" as L1
+  usecase "Buscar y listar lectores" as L2
+  usecase "Modificar lector" as L3
+  usecase "Eliminar lector" as L4
+  usecase "Validar cédula\n(dígito verificador)" as LC
+  usecase "Verificar cédula y\ncorreo únicos" as LU
+  usecase "Verificar que no tenga\npréstamos" as LP
+}
+U --> A1
+U --> A2
+U --> A3
+U --> A4
+U --> L1
+U --> L2
+U --> L3
+U --> L4
+A1 ..> AV : <<include>>
+A3 ..> AV : <<include>>
+A1 ..> AD : <<include>>
+A3 ..> AD : <<include>>
+L1 ..> LC : <<include>>
+L3 ..> LC : <<include>>
+L1 ..> LU : <<include>>
+L3 ..> LU : <<include>>
+L4 ..> LP : <<include>>
+@enduml

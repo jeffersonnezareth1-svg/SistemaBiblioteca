@@ -1,0 +1,37 @@
+!pragma layout smetana
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 12
+skinparam backgroundColor white
+skinparam ArrowColor #1F3864
+skinparam ArrowFontColor #1F3864
+skinparam ArrowFontSize 10
+skinparam actor {
+  BorderColor #1F3864
+  BackgroundColor #D9E2F3
+}
+skinparam usecase {
+  BorderColor #1F3864
+  BackgroundColor #DEEAF6
+  FontColor #000000
+}
+skinparam rectangle {
+  BorderColor #1F3864
+  BackgroundColor #FFFFFF
+  FontStyle bold
+}
+skinparam package {
+  BorderColor #2E74B5
+  BackgroundColor #F7FAFD
+}
+skinparam class {
+  BorderColor #1F3864
+  BackgroundColor #F7FAFD
+  HeaderBackgroundColor #BDD7EE
+  FontColor #000000
+}
+skinparam component {
+  BorderColor #1F3864
+  BackgroundColor #DEEAF6
+}

@@ -1,0 +1,28 @@
+@startuml
+!include estilo.iuml
+left to right direction
+title CU-09 y CU-10: Módulo Préstamo
+actor "Usuario" as U
+rectangle "Módulo Préstamo" {
+  usecase "CU-09 Registrar préstamo" as P1
+  usecase "Buscar y listar préstamos" as P2
+  usecase "Modificar préstamo" as P3
+  usecase "Eliminar préstamo" as P4
+  usecase "Validar fechas\n(máx. 30 días)" as PF
+  usecase "Verificar stock > 0" as PS
+  usecase "Verificar lector ACTIVO\ny < 3 pendientes" as PL
+  usecase "Actualizar stock\n(transacción)" as PT
+  usecase "Rechazar si ya fue\ndevuelto" as PD
+}
+U --> P1
+U --> P2
+U --> P3
+U --> P4
+P1 ..> PF : <<include>>
+P1 ..> PS : <<include>>
+P1 ..> PL : <<include>>
+P1 ..> PT : <<include>>
+P3 ..> PF : <<include>>
+P4 ..> PT : <<include>>
+PD ..> P3 : <<extend>>
+@enduml

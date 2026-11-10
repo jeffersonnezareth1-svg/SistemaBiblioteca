@@ -1,0 +1,69 @@
+@startuml
+!include estilo.iuml
+hide circle
+hide methods
+title Modelo de datos (bd_biblioteca)
+entity "usuario" as usuario {
+  * id_usuario : INT <<PK>>
+  --
+  nombre_usuario : VARCHAR(30) <<UQ>>
+  contrasena : CHAR(64)
+  nombres : VARCHAR(100)
+  rol : ENUM
+  activo : BOOLEAN
+}
+entity "libro" as libro {
+  * id_libro : INT <<PK>>
+  --
+  isbn : VARCHAR(13) <<UQ>>
+  titulo : VARCHAR(150)
+  editorial : VARCHAR(100)
+  anio_publicacion : INT
+  genero : VARCHAR(30)
+  numero_paginas : INT
+  stock : INT
+}
+entity "autor" as autor {
+  * id_autor : INT <<PK>>
+  --
+  nombres : VARCHAR(60)
+  apellidos : VARCHAR(60)
+  nacionalidad : VARCHAR(50)
+  fecha_nacimiento : DATE
+  biografia : VARCHAR(255)
+}
+entity "lector" as lector {
+  * id_lector : INT <<PK>>
+  --
+  cedula : CHAR(10) <<UQ>>
+  nombres : VARCHAR(60)
+  apellidos : VARCHAR(60)
+  correo : VARCHAR(100) <<UQ>>
+  telefono : VARCHAR(10)
+  direccion : VARCHAR(150)
+  estado : ENUM
+}
+entity "prestamo" as prestamo {
+  * id_prestamo : INT <<PK>>
+  --
+  id_libro : INT <<FK>>
+  id_lector : INT <<FK>>
+  fecha_prestamo : DATE
+  fecha_limite : DATE
+  estado : ENUM
+  observacion : VARCHAR(255)
+}
+entity "devolucion" as devolucion {
+  * id_devolucion : INT <<PK>>
+  --
+  id_prestamo : INT <<FK, UQ>>
+  fecha_devolucion : DATE
+  estado_libro : ENUM
+  dias_retraso : INT
+  multa : DECIMAL(8,2)
+  observacion : VARCHAR(255)
+}
+libro ||--o{ prestamo : "se presta en"
+lector ||--o{ prestamo : "solicita"
+prestamo ||--o| devolucion : "se cierra con"
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+!include estilo.iuml
+left to right direction
+title CU-01 y CU-02: Inicio de sesión y menú
+actor "Usuario" as U
+rectangle "Acceso al sistema" {
+  usecase "CU-01 Iniciar sesión" as CU01
+  usecase "Validar usuario\ny contraseña" as V
+  usecase "Cifrar contraseña\n(SHA-256)" as H
+  usecase "Bloquear tras\n3 intentos fallidos" as BL
+  usecase "Rechazar usuario\ninactivo" as IN
+  usecase "CU-02 Navegar el menú" as CU02
+  usecase "Cerrar sesión" as CS
+  usecase "Salir del sistema" as SA
+}
+actor "Base de datos\nMySQL" as DB
+U --> CU01
+U --> CU02
+CU01 ..> V : <<include>>
+CU01 ..> H : <<include>>
+BL ..> CU01 : <<extend>>
+IN ..> CU01 : <<extend>>
+CS ..> CU02 : <<extend>>
+SA ..> CU02 : <<extend>>
+CU01 --> DB
+@enduml

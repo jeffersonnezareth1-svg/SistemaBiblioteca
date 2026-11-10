@@ -1,0 +1,46 @@
+@startuml
+!include estilo.iuml
+left to right direction
+title Diagrama general de casos de uso
+actor "Administrador" as A
+actor "Bibliotecario" as B
+actor "Usuario" as U
+A --|> U
+B --|> U
+rectangle "Sistema de Gestión de Biblioteca" {
+  package "Acceso" {
+    usecase "CU-01 Iniciar sesión" as CU01
+    usecase "CU-02 Navegar el menú\ny cerrar sesión" as CU02
+  }
+  package "Libro" {
+    usecase "CU-03 Registrar libro" as CU03
+    usecase "CU-04 Buscar y listar libros" as CU04
+    usecase "CU-05 Modificar libro" as CU05
+    usecase "CU-06 Eliminar libro" as CU06
+  }
+  package "Autor y Lector" {
+    usecase "CU-07 Gestionar autores" as CU07
+    usecase "CU-08 Gestionar lectores" as CU08
+  }
+  package "Préstamo" {
+    usecase "CU-09 Registrar préstamo" as CU09
+    usecase "CU-10 Gestionar préstamos" as CU10
+  }
+  package "Devolución" {
+    usecase "CU-11 Registrar devolución" as CU11
+    usecase "CU-12 Gestionar devoluciones" as CU12
+  }
+}
+U --> CU01
+U --> CU02
+U --> CU03
+U --> CU04
+U --> CU05
+U --> CU06
+U --> CU07
+U --> CU08
+U --> CU09
+U --> CU10
+U --> CU11
+U --> CU12
+@enduml

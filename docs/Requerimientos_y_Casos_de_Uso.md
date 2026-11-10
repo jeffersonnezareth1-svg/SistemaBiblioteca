@@ -1,10 +1,13 @@
 # Especificación de Requerimientos y Casos de Uso
 ## Sistema de Gestión de Biblioteca
 
-**Asignatura:** Verificación y Validación de Software · Primer Parcial
-**Responsable del módulo Libro, conexión, login y menú:** Guashpa Gualli Jefferson Nezareth
-**Tecnología:** Java 17 · Swing · MySQL 8 · Maven · Arquitectura MVC (modelo, dao, controlador, vista, util)
-**Versión del documento:** 1.1 · 10/11/2026 (requerimientos funcionales y no funcionales reestructurados)
+| Datos del documento | |
+|---|---|
+| Asignatura | Verificación y Validación de Software · Primer Parcial |
+| Sistema | Sistema de Gestión de Biblioteca |
+| Tecnología | Java 17 · Swing · MySQL 8 · Maven · Arquitectura MVC |
+| Versión | 1.2 · 10/11/2026 |
+| Cambios | 1.1: requerimientos reestructurados. 1.2: formato de tablas y diagramas UML. |
 
 ---
 
@@ -41,6 +44,20 @@ En esta versión ambos roles tienen los mismos permisos; en los casos de uso se 
 
 ---
 
+### 1.5 Arquitectura del sistema
+
+La vista envía los datos del formulario como texto al controlador; el controlador valida, aplica las reglas de negocio
+y usa el DAO, que accede a MySQL con `PreparedStatement` mediante `util.Conexion`. El controlador responde con un
+`util.Respuesta` (éxito o error y el campo con error).
+
+![Figura 1. Arquitectura en capas (MVC)](diagramas/07_arquitectura.png){width=12cm}
+
+### 1.6 Modelo de datos
+
+![Figura 2. Modelo de datos de bd_biblioteca](diagramas/08_modelo_datos.png){width=16cm}
+
+---
+
 ## 2. Requerimientos funcionales
 
 ### 2.1 Formato de especificación
@@ -66,7 +83,7 @@ Reglas comunes a todos los módulos (aplican a cada RF de registro y modificaci�
 * Los textos se evalúan sin los espacios del inicio y del final (`trim`).
 * Los campos se validan **en el orden del formulario** y se informa solo **el primer error**, enfocando ese campo.
 * Toda operación termina con un mensaje de éxito o de error en una ventana emergente.
-* Si la base de datos falla, el mensaje es "Error de base de datos: <detalle>" y no se pierde lo escrito en el formulario.
+* Si la base de datos falla, el mensaje es "Error de base de datos: \<detalle\>" y no se pierde lo escrito en el formulario.
 
 ---
 
@@ -88,56 +105,83 @@ Reglas comunes a todos los módulos (aplican a cada RF de registro y modificaci�
 
 #### Especificación
 
-**RF-GEN-01 · Conectar con la base de datos** — Prioridad: Alta
-* **Descripción:** El sistema debe abrir la conexión con la base MySQL `bd_biblioteca` cada vez que necesita leer o guardar datos.
-* **Entradas:** URL, usuario y contraseña definidos en `util.Conexion`.
-* **Proceso:** Carga el driver JDBC y abre la conexión.
-* **Salidas:** Conexión abierta, o mensaje de error si el servidor no responde o las credenciales son erróneas.
-* **Criterio de aceptación:** Con MySQL detenido, al iniciar sesión aparece "No se pudo conectar con la base de datos: …" y la aplicación no se cae.
-* **Implementado en:** `util.Conexion.getConexion`
+| **RF-GEN-01** | **Conectar con la base de datos** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El sistema debe abrir la conexión con la base MySQL `bd_biblioteca` cada vez que necesita leer o guardar datos. |
+| Entradas | URL, usuario y contraseña definidos en `util.Conexion`. |
+| Proceso | Carga el driver JDBC y abre la conexión. |
+| Salidas | Conexión abierta, o mensaje de error si el servidor no responde o las credenciales son erróneas. |
+| Criterio de aceptación | Con MySQL detenido, al iniciar sesión aparece "No se pudo conectar con la base de datos: …" y la aplicación no se cae. |
+| Implementado en | `util.Conexion.getConexion` |
 
-**RF-LOG-01 · Iniciar sesión** — Prioridad: Alta
-* **Descripción:** El sistema debe permitir el ingreso solo a usuarios registrados y activos.
-* **Entradas:** Usuario, contraseña.
-* **Proceso:** Valida los campos (RF-LOG-02, RF-LOG-03), cifra la contraseña con SHA-256 y busca el par usuario/hash en la tabla `usuario`.
-* **Salidas:** "Bienvenido, <nombres>", se guarda la sesión y se abre el menú principal.
-* **Criterio de aceptación:** `admin` / `Admin123` y `bibliotecario` / `Biblio123` abren el menú principal.
-* **Implementado en:** `LoginController.iniciarSesion`, `UsuarioDAO.autenticar`, `util.Sesion`
 
-**RF-LOG-02 · Validar el nombre de usuario** — Prioridad: Alta
-* **Descripción:** El usuario debe ser obligatorio, sin espacios internos y de máximo 30 caracteres.
-* **Criterio de aceptación:** vacío → "El usuario es obligatorio"; `ad min` → "El usuario no debe contener espacios"; 31 caracteres → "El usuario no puede superar 30 caracteres".
-* **Implementado en:** `LoginController.validarUsuario`
+| **RF-LOG-01** | **Iniciar sesión** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El sistema debe permitir el ingreso solo a usuarios registrados y activos. |
+| Entradas | Usuario, contraseña. |
+| Proceso | Valida los campos (RF-LOG-02, RF-LOG-03), cifra la contraseña con SHA-256 y busca el par usuario/hash en la tabla `usuario`. |
+| Salidas | "Bienvenido, \<nombres\>", se guarda la sesión y se abre el menú principal. |
+| Criterio de aceptación | `admin` / `Admin123` y `bibliotecario` / `Biblio123` abren el menú principal. |
+| Implementado en | `LoginController.iniciarSesion`, `UsuarioDAO.autenticar`, `util.Sesion` |
 
-**RF-LOG-03 · Validar la contraseña** — Prioridad: Alta
-* **Descripción:** La contraseña debe ser obligatoria y tener al menos 6 caracteres.
-* **Criterio de aceptación:** vacía → "La contraseña es obligatoria"; `12345` → "La contraseña debe tener al menos 6 caracteres".
-* **Implementado en:** `LoginController.validarContrasena`
 
-**RF-LOG-04 · Rechazar credenciales incorrectas** — Prioridad: Alta
-* **Descripción:** Si el usuario no existe o la contraseña no coincide, el sistema debe negar el ingreso sin indicar cuál de los dos falló.
-* **Criterio de aceptación:** `admin` / `Admin999` → "Usuario o contraseña incorrectos" y el foco va a la contraseña.
-* **Implementado en:** `LoginController.iniciarSesion`
+| **RF-LOG-02** | **Validar el nombre de usuario** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El usuario debe ser obligatorio, sin espacios internos y de máximo 30 caracteres. |
+| Criterio de aceptación | vacío → "El usuario es obligatorio"; `ad min` → "El usuario no debe contener espacios"; 31 caracteres → "El usuario no puede superar 30 caracteres". |
+| Implementado en | `LoginController.validarUsuario` |
 
-**RF-LOG-05 · Rechazar usuarios inactivos** — Prioridad: Alta
-* **Descripción:** Un usuario con estado inactivo no debe poder ingresar aunque su contraseña sea correcta.
-* **Criterio de aceptación:** `invitado` / `Invitado123` → "El usuario está inactivo. Contacte al administrador".
-* **Implementado en:** `LoginController.iniciarSesion`
 
-**RF-LOG-06 · Bloquear tras 3 intentos fallidos** — Prioridad: Media
-* **Descripción:** Después de 3 intentos de ingreso fallidos el sistema debe avisar y cerrarse.
-* **Criterio de aceptación:** Al tercer error aparece "Superó el número máximo de intentos. El sistema se cerrará." y la aplicación termina.
-* **Implementado en:** `LoginFrame.MAX_INTENTOS`, `LoginFrame` (contador `intentosFallidos`)
+| **RF-LOG-03** | **Validar la contraseña** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | La contraseña debe ser obligatoria y tener al menos 6 caracteres. |
+| Criterio de aceptación | vacía → "La contraseña es obligatoria"; `12345` → "La contraseña debe tener al menos 6 caracteres". |
+| Implementado en | `LoginController.validarContrasena` |
 
-**RF-MEN-01 · Acceder a los módulos desde el menú** — Prioridad: Alta
-* **Descripción:** El menú principal debe mostrar los módulos Libros, Autores, Lectores, Préstamos y Devoluciones, tanto en la barra de menú como en botones laterales.
-* **Criterio de aceptación:** Cada opción abre el panel de su módulo con la tabla cargada.
-* **Implementado en:** `MenuPrincipalFrame`
 
-**RF-MEN-02 · Cerrar sesión y salir** — Prioridad: Media
-* **Descripción:** El usuario debe poder cerrar sesión (volver al login) o salir de la aplicación (Ctrl+Q), en ambos casos con confirmación.
-* **Criterio de aceptación:** Al responder "Sí" se vuelve al login o se cierra la aplicación; al responder "No" se queda en el menú.
-* **Implementado en:** `MenuPrincipalFrame`, `LoginController.cerrarSesion`
+| **RF-LOG-04** | **Rechazar credenciales incorrectas** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | Si el usuario no existe o la contraseña no coincide, el sistema debe negar el ingreso sin indicar cuál de los dos falló. |
+| Criterio de aceptación | `admin` / `Admin999` → "Usuario o contraseña incorrectos" y el foco va a la contraseña. |
+| Implementado en | `LoginController.iniciarSesion` |
+
+
+| **RF-LOG-05** | **Rechazar usuarios inactivos** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | Un usuario con estado inactivo no debe poder ingresar aunque su contraseña sea correcta. |
+| Criterio de aceptación | `invitado` / `Invitado123` → "El usuario está inactivo. Contacte al administrador". |
+| Implementado en | `LoginController.iniciarSesion` |
+
+
+| **RF-LOG-06** | **Bloquear tras 3 intentos fallidos** |
+|---|---|
+| Prioridad | Media |
+| Descripción | Después de 3 intentos de ingreso fallidos el sistema debe avisar y cerrarse. |
+| Criterio de aceptación | Al tercer error aparece "Superó el número máximo de intentos. El sistema se cerrará." y la aplicación termina. |
+| Implementado en | `LoginFrame.MAX_INTENTOS`, `LoginFrame` (contador `intentosFallidos`) |
+
+
+| **RF-MEN-01** | **Acceder a los módulos desde el menú** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El menú principal debe mostrar los módulos Libros, Autores, Lectores, Préstamos y Devoluciones, tanto en la barra de menú como en botones laterales. |
+| Criterio de aceptación | Cada opción abre el panel de su módulo con la tabla cargada. |
+| Implementado en | `MenuPrincipalFrame` |
+
+
+| **RF-MEN-02** | **Cerrar sesión y salir** |
+|---|---|
+| Prioridad | Media |
+| Descripción | El usuario debe poder cerrar sesión (volver al login) o salir de la aplicación (Ctrl+Q), en ambos casos con confirmación. |
+| Criterio de aceptación | Al responder "Sí" se vuelve al login o se cierra la aplicación; al responder "No" se queda en el menú. |
+| Implementado en | `MenuPrincipalFrame`, `LoginController.cerrarSesion` |
+
 
 ---
 
@@ -166,49 +210,68 @@ Reglas comunes a todos los módulos (aplican a cada RF de registro y modificaci�
 
 #### Especificación de operaciones
 
-**RF-LIB-01 · Registrar libro** — Prioridad: Alta
-* **Descripción:** El sistema debe permitir registrar un libro nuevo.
-* **Entradas:** ISBN, título, editorial, año de publicación, género, número de páginas, stock (todos como texto del formulario).
-* **Proceso:** 1) Valida los campos en orden: ISBN → título → editorial → año → género → páginas → stock (RF-LIB-06 a RF-LIB-13). 2) Verifica que el ISBN no exista (RF-LIB-07). 3) Inserta el registro en la tabla `libro`.
-* **Salidas:** "Libro registrado correctamente"; el formulario se cierra y la tabla se actualiza.
-* **Criterio de aceptación:** Con `9789942000001`, "La vorágine", "Editorial Planeta", `1924`, Novela, `320`, `3` el libro aparece en la tabla con esos datos.
-* **Implementado en:** `LibroController.registrarLibro`, `validarCampos`, `LibroDAO.insertar`
+| **RF-LIB-01** | **Registrar libro** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El sistema debe permitir registrar un libro nuevo. |
+| Entradas | ISBN, título, editorial, año de publicación, género, número de páginas, stock (todos como texto del formulario). |
+| Proceso | 1) Valida los campos en orden: ISBN → título → editorial → año → género → páginas → stock (RF-LIB-06 a RF-LIB-13). 2) Verifica que el ISBN no exista (RF-LIB-07). 3) Inserta el registro en la tabla `libro`. |
+| Salidas | "Libro registrado correctamente"; el formulario se cierra y la tabla se actualiza. |
+| Criterio de aceptación | Con `9789942000001`, "La vorágine", "Editorial Planeta", `1924`, Novela, `320`, `3` el libro aparece en la tabla con esos datos. |
+| Implementado en | `LibroController.registrarLibro`, `validarCampos`, `LibroDAO.insertar` |
 
-**RF-LIB-02 · Listar libros** — Prioridad: Alta
-* **Descripción:** El sistema debe mostrar todos los libros registrados al abrir el módulo y al pulsar "Mostrar todos".
-* **Salidas:** Tabla con id, ISBN, título, editorial, año, género, páginas y stock.
-* **Criterio de aceptación:** Con el script de datos de prueba recién ejecutado se muestran los 15 libros.
-* **Implementado en:** `LibroController.listarLibros`, `LibroDAO.listar`
 
-**RF-LIB-03 · Buscar libros** — Prioridad: Media
-* **Descripción:** El sistema debe filtrar los libros cuyo ISBN, título, editorial o género contengan el texto escrito (coincidencia parcial).
-* **Entradas:** Texto de búsqueda.
-* **Proceso:** Si el texto está vacío lista todos (RF-LIB-02); si no, consulta con `LIKE %texto%`.
-* **Salidas:** Tabla con las coincidencias; vacía si no hay ninguna.
-* **Criterio de aceptación:** Buscar "Novela" muestra solo libros de ese género; buscar "zzz" deja la tabla vacía; texto vacío muestra los 15.
-* **Implementado en:** `LibroController.buscarLibros`, `LibroDAO.buscar`
+| **RF-LIB-02** | **Listar libros** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El sistema debe mostrar todos los libros registrados al abrir el módulo y al pulsar "Mostrar todos". |
+| Salidas | Tabla con id, ISBN, título, editorial, año, género, páginas y stock. |
+| Criterio de aceptación | Con el script de datos de prueba recién ejecutado se muestran los 15 libros. |
+| Implementado en | `LibroController.listarLibros`, `LibroDAO.listar` |
 
-**RF-LIB-04 · Modificar libro** — Prioridad: Alta
-* **Descripción:** El sistema debe permitir cambiar los datos de un libro seleccionado (botón Editar o doble clic).
-* **Entradas:** Id del libro seleccionado y los mismos campos de RF-LIB-01.
-* **Proceso:** 1) Verifica que haya un libro seleccionado (RF-LIB-15). 2) Valida los campos igual que al registrar. 3) Verifica que el ISBN no pertenezca a **otro** libro. 4) Actualiza el registro.
-* **Salidas:** "Libro actualizado correctamente"; la tabla muestra los nuevos datos.
-* **Criterio de aceptación:** Cambiar solo el stock de un libro conserva su ISBN y no da error de ISBN repetido.
-* **Implementado en:** `LibroController.actualizarLibro`, `LibroDAO.actualizar`
 
-**RF-LIB-05 · Eliminar libro** — Prioridad: Alta
-* **Descripción:** El sistema debe permitir eliminar un libro seleccionado después de pedir confirmación.
-* **Proceso:** 1) Verifica selección y existencia (RF-LIB-15). 2) Verifica que no tenga préstamos (RF-LIB-14). 3) Borra el registro.
-* **Salidas:** "Libro eliminado correctamente"; el libro desaparece de la tabla. Si el usuario responde "No" en la confirmación, no pasa nada.
-* **Criterio de aceptación:** El libro id 9 (sin préstamos) se elimina.
-* **Implementado en:** `LibroController.eliminarLibro`, `LibroDAO.eliminar`
+| **RF-LIB-03** | **Buscar libros** |
+|---|---|
+| Prioridad | Media |
+| Descripción | El sistema debe filtrar los libros cuyo ISBN, título, editorial o género contengan el texto escrito (coincidencia parcial). |
+| Entradas | Texto de búsqueda. |
+| Proceso | Si el texto está vacío lista todos (RF-LIB-02); si no, consulta con `LIKE %texto%`. |
+| Salidas | Tabla con las coincidencias; vacía si no hay ninguna. |
+| Criterio de aceptación | Buscar "Novela" muestra solo libros de ese género; buscar "zzz" deja la tabla vacía; texto vacío muestra los 15. |
+| Implementado en | `LibroController.buscarLibros`, `LibroDAO.buscar` |
+
+
+| **RF-LIB-04** | **Modificar libro** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El sistema debe permitir cambiar los datos de un libro seleccionado (botón Editar o doble clic). |
+| Entradas | Id del libro seleccionado y los mismos campos de RF-LIB-01. |
+| Proceso | 1) Verifica que haya un libro seleccionado (RF-LIB-15). 2) Valida los campos igual que al registrar. 3) Verifica que el ISBN no pertenezca a **otro** libro. 4) Actualiza el registro. |
+| Salidas | "Libro actualizado correctamente"; la tabla muestra los nuevos datos. |
+| Criterio de aceptación | Cambiar solo el stock de un libro conserva su ISBN y no da error de ISBN repetido. |
+| Implementado en | `LibroController.actualizarLibro`, `LibroDAO.actualizar` |
+
+
+| **RF-LIB-05** | **Eliminar libro** |
+|---|---|
+| Prioridad | Alta |
+| Descripción | El sistema debe permitir eliminar un libro seleccionado después de pedir confirmación. |
+| Proceso | 1) Verifica selección y existencia (RF-LIB-15). 2) Verifica que no tenga préstamos (RF-LIB-14). 3) Borra el registro. |
+| Salidas | "Libro eliminado correctamente"; el libro desaparece de la tabla. Si el usuario responde "No" en la confirmación, no pasa nada. |
+| Criterio de aceptación | El libro id 9 (sin préstamos) se elimina. |
+| Implementado en | `LibroController.eliminarLibro`, `LibroDAO.eliminar` |
+
 
 #### Especificación de validaciones y reglas
 
 En cada validación, la columna **Mensaje** es el resultado esperado exacto para las pruebas.
 
-**RF-LIB-06 · Validar ISBN** — Prioridad: Alta · `LibroController.validarIsbn`
-* **Regla:** obligatorio; solo dígitos (sin guiones ni espacios); exactamente 10 o 13 dígitos.
+| **RF-LIB-06** | **Validar ISBN** |
+|---|---|
+| Prioridad | Alta |
+| Regla | obligatorio; solo dígitos (sin guiones ni espacios); exactamente 10 o 13 dígitos. |
+| Implementado en | `LibroController.validarIsbn` |
+
 
 | Condición | Ejemplo | Mensaje |
 |-----------|---------|---------|
@@ -217,11 +280,18 @@ En cada validación, la columna **Mensaje** es el resultado esperado exacto para
 | Longitud distinta de 10 y 13 | `123456789` (9), `12345678901` (11) | El ISBN debe tener 10 o 13 dígitos |
 | Válido | `1234567890`, `9789942000001` | (sin error) |
 
-**RF-LIB-07 · Controlar ISBN único** — Prioridad: Alta · `LibroDAO.existeIsbn`
-* **Regla:** no puede haber dos libros con el mismo ISBN. Al modificar se excluye el propio libro.
-* **Mensaje:** al registrar "Ya existe un libro registrado con ese ISBN"; al modificar "Ya existe otro libro registrado con ese ISBN".
+| **RF-LIB-07** | **Controlar ISBN único** |
+|---|---|
+| Prioridad | Alta |
+| Regla | no puede haber dos libros con el mismo ISBN. Al modificar se excluye el propio libro. |
+| Mensaje | al registrar "Ya existe un libro registrado con ese ISBN"; al modificar "Ya existe otro libro registrado con ese ISBN". |
+| Implementado en | `LibroDAO.existeIsbn` |
 
-**RF-LIB-08 · Validar título** — Prioridad: Alta · `validarTitulo`
+
+| **RF-LIB-08** | **Validar título** |
+|---|---|
+| Prioridad | Alta |
+| Implementado en | `validarTitulo` |
 
 | Condición | Mensaje |
 |-----------|---------|
@@ -231,7 +301,10 @@ En cada validación, la columna **Mensaje** es el resultado esperado exacto para
 
 * **Valores límite:** 1 ✗, 2 ✓, 150 ✓, 151 ✗.
 
-**RF-LIB-09 · Validar editorial** — Prioridad: Alta · `validarEditorial`
+| **RF-LIB-09** | **Validar editorial** |
+|---|---|
+| Prioridad | Alta |
+| Implementado en | `validarEditorial` |
 
 | Condición | Mensaje |
 |-----------|---------|
@@ -241,7 +314,10 @@ En cada validación, la columna **Mensaje** es el resultado esperado exacto para
 
 * **Valores límite:** 1 ✗, 2 ✓, 100 ✓, 101 ✗. Ejemplo inválido: `Editorial#1`.
 
-**RF-LIB-10 · Validar año de publicación** — Prioridad: Alta · `validarAnioPublicacion`
+| **RF-LIB-10** | **Validar año de publicación** |
+|---|---|
+| Prioridad | Alta |
+| Implementado en | `validarAnioPublicacion` |
 
 | Condición | Mensaje |
 |-----------|---------|
@@ -252,15 +328,22 @@ En cada validación, la columna **Mensaje** es el resultado esperado exacto para
 
 * **Valores límite:** 1449 ✗, 1450 ✓, año actual ✓, año actual + 1 ✗.
 
-**RF-LIB-11 · Validar género** — Prioridad: Alta · `validarGenero`
-* **Regla:** uno de Novela, Cuento, Poesía, Ciencia, Historia, Tecnología, Infantil, Otro (lista desplegable).
+| **RF-LIB-11** | **Validar género** |
+|---|---|
+| Prioridad | Alta |
+| Regla | uno de Novela, Cuento, Poesía, Ciencia, Historia, Tecnología, Infantil, Otro (lista desplegable). |
+| Implementado en | `validarGenero` |
+
 
 | Condición | Mensaje |
 |-----------|---------|
 | Sin seleccionar | Debe seleccionar un género |
 | Valor fuera de la lista | El género seleccionado no es válido |
 
-**RF-LIB-12 · Validar número de páginas** — Prioridad: Media · `validarNumeroPaginas`
+| **RF-LIB-12** | **Validar número de páginas** |
+|---|---|
+| Prioridad | Media |
+| Implementado en | `validarNumeroPaginas` |
 
 | Condición | Mensaje |
 |-----------|---------|
@@ -270,7 +353,10 @@ En cada validación, la columna **Mensaje** es el resultado esperado exacto para
 
 * **Valores límite:** 0 ✗, 1 ✓, 5000 ✓, 5001 ✗.
 
-**RF-LIB-13 · Validar stock** — Prioridad: Alta · `validarStock`
+| **RF-LIB-13** | **Validar stock** |
+|---|---|
+| Prioridad | Alta |
+| Implementado en | `validarStock` |
 
 | Condición | Mensaje |
 |-----------|---------|
@@ -280,12 +366,19 @@ En cada validación, la columna **Mensaje** es el resultado esperado exacto para
 
 * **Valores límite:** -1 ✗, 0 ✓, 500 ✓, 501 ✗.
 
-**RF-LIB-14 · Impedir eliminar libros con préstamos** — Prioridad: Alta · `LibroDAO.tienePrestamos`
-* **Regla:** un libro con al menos un préstamo (de cualquier estado) no se elimina.
-* **Mensaje:** "No se puede eliminar: el libro tiene préstamos registrados".
-* **Criterio de aceptación:** el libro id 1 no se elimina; el id 9 sí.
+| **RF-LIB-14** | **Impedir eliminar libros con préstamos** |
+|---|---|
+| Prioridad | Alta |
+| Regla | un libro con al menos un préstamo (de cualquier estado) no se elimina. |
+| Mensaje | "No se puede eliminar: el libro tiene préstamos registrados". |
+| Criterio de aceptación | el libro id 1 no se elimina; el id 9 sí. |
+| Implementado en | `LibroDAO.tienePrestamos` |
 
-**RF-LIB-15 · Exigir un libro seleccionado y existente** — Prioridad: Media · `actualizarLibro`, `eliminarLibro`
+
+| **RF-LIB-15** | **Exigir un libro seleccionado y existente** |
+|---|---|
+| Prioridad | Media |
+| Implementado en | `actualizarLibro`, `eliminarLibro` |
 
 | Condición | Mensaje |
 |-----------|---------|
@@ -294,8 +387,12 @@ En cada validación, la columna **Mensaje** es el resultado esperado exacto para
 | El libro fue borrado antes de modificarlo | El libro ya no existe en la base de datos |
 | El libro no existe al eliminar | El libro no existe |
 
-**RF-LIB-16 · Informar el resultado de cada operación** — Prioridad: Media · `util.Respuesta`, `LibroDialog`
-* **Descripción:** después de guardar o eliminar, el sistema debe mostrar un mensaje de éxito o de error; si el error es de un campo, el cursor se coloca en ese campo y el formulario no se cierra.
+| **RF-LIB-16** | **Informar el resultado de cada operación** |
+|---|---|
+| Prioridad | Media |
+| Descripción | después de guardar o eliminar, el sistema debe mostrar un mensaje de éxito o de error; si el error es de un campo, el cursor se coloca en ese campo y el formulario no se cierra. |
+| Implementado en | `util.Respuesta`, `LibroDialog` |
+
 
 ---
 
@@ -389,30 +486,15 @@ Clasificados según las características de calidad de la norma **ISO/IEC 25010*
 
 ## 4. Diagrama general de casos de uso
 
-```
-                          +-------------------------------------------------+
-                          |          Sistema de Gestión de Biblioteca       |
-                          |                                                 |
-                          |  (CU-01 Iniciar sesión)                         |
-                          |  (CU-02 Navegar menú / Cerrar sesión)           |
-   +-----------------+    |                                                 |
-   |   Usuario       |----|  (CU-03 Registrar libro) ---<<include>>--+      |
-   | (Administrador  |    |  (CU-04 Buscar/listar libros)            |      |
-   |  o              |    |  (CU-05 Modificar libro) ---<<include>>--+--> (Validar datos del libro)
-   |  Bibliotecario) |    |  (CU-06 Eliminar libro)                         |
-   +-----------------+    |  (CU-07 Gestionar autores)                      |
-                          |  (CU-08 Gestionar lectores)                     |
-                          |  (CU-09 Registrar préstamo)                     |
-                          |  (CU-10 Gestionar préstamos)                    |
-                          |  (CU-11 Registrar devolución)                   |
-                          |  (CU-12 Gestionar devoluciones)                 |
-                          +-------------------------------------------------+
-   Todos los CU-03..CU-12 requieren <<include>> CU-01 (sesión iniciada).
-```
+El usuario del sistema puede ser Administrador o Bibliotecario (generalización); ambos tienen acceso a todos los casos de uso.
+
+![Figura 3. Diagrama general de casos de uso](diagramas/01_cu_general.png){width=9cm}
 
 ---
 
 ## 5. Casos de uso
+
+![Figura 4. Casos de uso de acceso al sistema](diagramas/02_cu_login.png){width=15cm}
 
 ### CU-01 Iniciar sesión
 | Elemento | Descripción |
@@ -420,7 +502,7 @@ Clasificados según las características de calidad de la norma **ISO/IEC 25010*
 | Actor | Usuario |
 | Requerimientos | RF-GEN-01, RF-LOG-01 a RF-LOG-06 |
 | Precondición | La base de datos está disponible y el usuario existe. |
-| Flujo básico | 1. El sistema muestra la ventana de login. 2. El usuario escribe usuario y contraseña y pulsa **Ingresar**. 3. El sistema valida los campos. 4. El sistema cifra la contraseña con SHA-256 y busca el usuario. 5. El sistema verifica que el usuario esté activo. 6. El sistema guarda la sesión, muestra "Bienvenido, <nombre>" y abre el menú principal. |
+| Flujo básico | 1. El sistema muestra la ventana de login. 2. El usuario escribe usuario y contraseña y pulsa **Ingresar**. 3. El sistema valida los campos. 4. El sistema cifra la contraseña con SHA-256 y busca el usuario. 5. El sistema verifica que el usuario esté activo. 6. El sistema guarda la sesión, muestra "Bienvenido, \<nombre\>" y abre el menú principal. |
 | Flujos alternos | 3a. Usuario vacío, con espacios o >30 caracteres, o contraseña vacía o <6 caracteres: muestra el error y enfoca el campo. 4a. Credenciales incorrectas: muestra "Usuario o contraseña incorrectos" y suma un intento; al tercer intento muestra un aviso y cierra el sistema. 5a. Usuario inactivo (`invitado`): muestra el mensaje de inactivo. 4b. Falla la conexión: "No se pudo conectar con la base de datos". El usuario pulsa **Salir**: termina la aplicación. |
 | Postcondición | Sesión iniciada y menú principal visible. |
 
@@ -433,6 +515,8 @@ Clasificados según las características de calidad de la norma **ISO/IEC 25010*
 | Flujo básico | 1. El usuario elige un módulo en la barra de menú o en los botones laterales. 2. El sistema muestra el panel del módulo con sus datos. |
 | Flujos alternos | 1a. **Cerrar sesión**: el sistema pide confirmación, cierra la sesión y vuelve al login. 1b. **Salir** (Ctrl+Q): pide confirmación y cierra la aplicación. 1c. El usuario responde "No": se queda en el menú. |
 | Postcondición | Módulo visible, o sesión cerrada. |
+
+![Figura 5. Casos de uso del módulo Libro](diagramas/03_cu_libro.png){width=16cm}
 
 ### CU-03 Registrar libro
 | Elemento | Descripción |
@@ -474,6 +558,8 @@ Clasificados según las características de calidad de la norma **ISO/IEC 25010*
 | Flujos alternos | 1a. Sin selección: "Debe seleccionar un libro para eliminar". 3a. El usuario cancela: no se elimina. 4a. No existe: "El libro no existe". 4b. Tiene préstamos: "No se puede eliminar: el libro tiene préstamos registrados" (p. ej. libros 1–8, 11, 12 del script). |
 | Postcondición | El libro ya no aparece en la tabla. |
 
+![Figura 6. Casos de uso de los módulos Autor y Lector](diagramas/04_cu_autor_lector.png){width=14cm}
+
 ### CU-07 Gestionar autores
 | Elemento | Descripción |
 |----------|-------------|
@@ -494,6 +580,8 @@ Clasificados según las características de calidad de la norma **ISO/IEC 25010*
 | Flujos alternos | 3a. Dato inválido o duplicado: mensaje del campo. Eliminar un lector con préstamos: se rechaza. |
 | Postcondición | Lector registrado, actualizado o eliminado. |
 
+![Figura 7. Casos de uso del módulo Préstamo](diagramas/05_cu_prestamo.png){width=16cm}
+
 ### CU-09 Registrar préstamo
 | Elemento | Descripción |
 |----------|-------------|
@@ -512,6 +600,8 @@ Clasificados según las características de calidad de la norma **ISO/IEC 25010*
 | Flujo básico | 1. El usuario busca o selecciona un préstamo. 2. Edita los datos o lo elimina. 3. El sistema revisa las reglas (stock si cambia el libro, estado y límite si cambia el lector) y guarda. |
 | Flujos alternos | Préstamo DEVUELTO: no se modifica. Préstamo con devolución: no se elimina. |
 | Postcondición | Préstamo actualizado o eliminado; stock ajustado. |
+
+![Figura 8. Casos de uso del módulo Devolución](diagramas/06_cu_devolucion.png){width=15cm}
 
 ### CU-11 Registrar devolución
 | Elemento | Descripción |
