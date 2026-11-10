@@ -1,7 +1,7 @@
 # Diagramas y generación del documento
 
 * `*.puml`: fuentes PlantUML de los diagramas (estilo común en `estilo.iuml`); `*.png`: imágenes exportadas.
-* Regenerar las imágenes: `java -jar plantuml.jar -tpng -charset UTF-8 0*.puml`
+* Regenerar las imágenes: `java -jar plantuml.jar -tpng -charset UTF-8 0*.puml   (01..09)`
 * Regenerar el Word (desde `docs/`):
 
 ```bash

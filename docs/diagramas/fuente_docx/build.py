@@ -15,7 +15,7 @@ def styles(path):
             s=st[n]; s.font.name='Calibri'; s.font.size=Pt(11)
             s.element.rPr.rFonts.set(qn('w:eastAsia'),'Calibri')
         except KeyError: pass
-    for n,sz in [('Title',24),('Subtitle',16),('Heading 1',16),('Heading 2',14),('Heading 3',12),('Heading 4',11)]:
+    for n,sz in [('Title',24),('Subtitle',16),('Heading 1',16),('Heading 2',14),('Heading 3',12),('Heading 4',11),('Heading 5',10.5)]:
         s=next((x for x in st if x.name.lower()==n.lower() or x.style_id==n.replace(' ','')),None)
         if s is None: continue
         s.font.name='Calibri'; s.font.size=Pt(sz); s.font.bold=True; s.font.color.rgb=RGBColor.from_string(AZUL)
@@ -121,6 +121,7 @@ def main(path):
            ('Campo','Condición'):[.13,.3,.57]}
         for k,v in W.items():
             if tuple(hdr[:len(k)])==k and len(v)==n: colwidths(tbl,v)
+        if hdr==['Módulo','Tipo']: colwidths(tbl,[.55,.45])
         if hdr[:2]==['ID','Nombre'] and n==3: colwidths(tbl,[.2,.6,.2])
         if hdr[:2]==['ID','Requerimiento'] and n==3: colwidths(tbl,[.14,.6,.26])
         if n==2:
@@ -137,6 +138,31 @@ def main(path):
             for row in tbl.rows[:-1]:
                 for c in row.cells:
                     for pp in c.paragraphs: pp.paragraph_format.keep_with_next=True
+    # cuadros para capturas
+    num=0
+    for p in list(d.paragraphs):
+        t=p.text.strip()
+        if t.startswith('[[CAPTURA:') and t.endswith(']]'):
+            num+=1
+            label=t[len('[[CAPTURA:'):-2].strip()
+            tbl=d.add_table(rows=1,cols=1)
+            borders(tbl)
+            tblPr=tbl._tbl.tblPr
+            b=tblPr.find(qn('w:tblBorders'))
+            for x in b: x.set(qn('w:val'),'dashed'); x.set(qn('w:sz'),'12'); x.set(qn('w:color'),'2E74B5')
+            row=tbl.rows[0]
+            trPr=row._tr.get_or_add_trPr()
+            h=OxmlElement('w:trHeight'); h.set(qn('w:val'),str(int(7.5*567))); h.set(qn('w:hRule'),'atLeast'); trPr.append(h)
+            cell=row.cells[0]; shade(cell,'F7FAFD')
+            tcPr=cell._tc.get_or_add_tcPr(); va=OxmlElement('w:vAlign'); va.set(qn('w:val'),'center'); tcPr.append(va)
+            cp=cell.paragraphs[0]; cp.alignment=WD_ALIGN_PARAGRAPH.CENTER
+            r=cp.add_run('Pegue aquí la captura'); r.font.size=Pt(11); r.font.italic=True; r.font.color.rgb=RGBColor.from_string('8EAADB')
+            p._p.addprevious(tbl._tbl)
+            p.text=''
+            r=p.add_run(f'Pantalla {num}. {label}'); r.font.size=Pt(9.5); r.font.italic=True; r.font.color.rgb=RGBColor.from_string(AZUL)
+            p.alignment=WD_ALIGN_PARAGRAPH.CENTER
+            p.paragraph_format.space_after=Pt(10)
+            cp.paragraph_format.keep_with_next=True
     # images: center + caption style
     for i,p in enumerate(d.paragraphs):
         if p._p.xpath('.//pic:pic'):
